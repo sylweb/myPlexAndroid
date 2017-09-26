@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Mon Plex</string>
+
+    <string name="navigation_drawer_open">Ouvrir la barre de navigation</string>
+    <string name="navigation_drawer_close">Fermer la barre de navigation</string>
+    <string name="action_settings">Configuration</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

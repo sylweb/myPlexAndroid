@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/add_library"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="Ajouter une librairie" />
+        <item
+            android:id="@+id/delete_library"
+            android:icon="@android:drawable/ic_input_delete"
+            android:title="Supprimer une librairie" />
+    </group>
+
+</menu>
