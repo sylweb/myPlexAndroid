@@ -19,5 +19,6 @@ public class VideoEntry {
         this.year = year;
         this.categories = new ArrayList();
     }
+    
 
 }
