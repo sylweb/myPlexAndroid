@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class LibraryContentAdapter extends BaseAdapter {
 
-    private ArrayList<VideoEntry> data;
+    public ArrayList<VideoEntry> data;
 
     private static LayoutInflater inflater = null;
 
