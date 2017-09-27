@@ -1,10 +1,12 @@
 package com.sylweb.myplex;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,14 +16,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import org.json.JSONObject;
+
+import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener {
+
+    private ArrayList<LibraryEntry> libraryList;
+    private ListView myList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //First init local DB
+        DBManager.initDB(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -29,7 +45,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -37,11 +53,32 @@ public class MainActivity extends AppCompatActivity
 
         findViewById(R.id.content_frame);
 
+        loadLibraryList();
+    }
+
+    private void loadLibraryList() {
+
+        this.libraryList = LibraryModel.getAll();
+        if(libraryList != null) {
+            this.myList = (ListView) findViewById(R.id.library_list);
+            this.myList.setAdapter(new LibraryListAdapter(this, this.libraryList));
+            this.myList.setOnItemClickListener(this);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+        LibraryEntry item = (LibraryEntry) adapterView.getItemAtPosition(i);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        LibraryViewFragment frag = new LibraryViewFragment();
-        frag.libraryId = "1";
+        LibraryContentFragment frag = new LibraryContentFragment();
+        frag.libraryId = item.id;
+        frag.context = this;
         ft.replace(R.id.content_frame, frag);
         ft.commit();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) drawer.closeDrawer(GravityCompat.START);
+
     }
 
     @Override
@@ -83,13 +120,27 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.add_library) {
-
+            startActivity(new Intent(this, LibraryCreationActivity.class));
         } else if (id == R.id.delete_library) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public class TestThread extends Thread {
+
+        @Override
+        public void run() {
+
+            //Example de recherche de tout les films du nom de fight club
+            //String url = "https://api.themoviedb.org/3/search/movie?api_key=c15ed3307384c1d73034f5fe889cd871&query=fight+club";
+
+            //Example de lecture de la fiche d'un film dont l'id est 550
+            //String url = "https://api.themoviedb.org/3/movie/550?api_key=c15ed3307384c1d73034f5fe889cd871&language=fr";
+
+        }
+
     }
 }

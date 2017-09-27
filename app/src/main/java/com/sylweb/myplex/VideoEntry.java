@@ -1,6 +1,11 @@
 package com.sylweb.myplex;
 
+import android.util.Log;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by sylvain on 26/09/2017.
@@ -8,15 +13,28 @@ import java.util.ArrayList;
 
 public class VideoEntry {
 
+    public Integer id;
+    public Integer tmdb_id;
+    public Integer library_id;
     public String name;
-    public String summary;
+    public String overview;
     public String year;
-    public ArrayList categories;
+    public String file_url;
+    public String jpg_url;
 
-    public VideoEntry(String name, String summary, String year) {
-        this.name = name;
-        this.summary = summary;
-        this.year = year;
-        this.categories = new ArrayList();
+    public VideoEntry(Object data) {
+        HashMap entry = (HashMap) data;
+        this.id = Integer.valueOf((String)entry.get("id"));
+        this.tmdb_id = Integer.valueOf((String) entry.get("tmdb_id"));
+        this.library_id = Integer.valueOf((String) entry.get("library_id"));
+        this.name = (String) entry.get("name");
+        this.overview = (String) entry.get("overview");
+        this.year = (String) entry.get("year");
+        this.file_url = (String) entry.get("file_url");
+        this.jpg_url = (String) entry.get("jpg_url");
+    }
+
+    public VideoEntry() {
+
     }
 }
