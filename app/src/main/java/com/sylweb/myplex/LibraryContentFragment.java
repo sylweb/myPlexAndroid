@@ -23,7 +23,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     private GridView myGridView;
 
-    protected MessageReceiver refreshReceiver;
+    protected MessageReceiver messageReceiver;
 
     private View view;
 
@@ -40,25 +40,32 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         this.view = inflater.inflate(R.layout.fragment_library_full_view, container, false);
         this.myGridView = view.findViewById(R.id.library_content);
 
-        this.videos = VideoModel.getAllForLibrary(libraryId);
         this.myGridView.setAdapter(new LibraryContentAdapter(context, videos));
         this.myGridView.setOnItemClickListener(this);
 
-        this.refreshReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this.context).registerReceiver(refreshReceiver,
-                new IntentFilter("LibUpdate"));
+        this.messageReceiver = new MessageReceiver();
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver,
+                new IntentFilter("LIBRARY_SYNC_FINISHED"));
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver,
+                new IntentFilter("VIDEO_DATA_READY"));
+
+        updateData(this.libraryId);
 
         return view;
     }
 
     private void updateData(Integer libId) {
         if(libId == this.libraryId) {
-            this.videos = VideoModel.getAllForLibrary(libraryId);
+            VideoModel.askForUpdate(this.context, this.libraryId);
+            ((MainActivity) getActivity()).synchroFinished();
+        }
+    }
+
+    private void displayData(Integer libraryId, ArrayList<VideoEntry> data) {
+        if(libraryId == this.libraryId) {
+            this.videos = data;
             ((LibraryContentAdapter) this.myGridView.getAdapter()).data = this.videos;
             ((LibraryContentAdapter) this.myGridView.getAdapter()).notifyDataSetChanged();
-
-            //Indicate main activity that synchronization is finished
-            ((MainActivity)this.getActivity()).synchroFinished();
         }
     }
 
@@ -69,16 +76,18 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onPause() {
-        LocalBroadcastManager.getInstance(this.context).unregisterReceiver(refreshReceiver);
+        LocalBroadcastManager.getInstance(this.context).unregisterReceiver(messageReceiver);
         super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        this.refreshReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this.context).registerReceiver(refreshReceiver,
-                new IntentFilter("LibUpdate"));
+        this.messageReceiver = new MessageReceiver();
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver,
+                new IntentFilter("LIBRARY_SYNC_FINISHED"));
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver,
+                new IntentFilter("VIDEO_DATA_READY"));
     }
 
     public void onStop() {
@@ -100,8 +109,10 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if(intent.getAction().toString().equals("LibUpdate")) {
-                updateData(intent.getIntExtra("libId", 0));
+            if(intent.getAction().toString().equals("LIBRARY_SYNC_FINISHED")) {
+                updateData(intent.getIntExtra("LIBRARY_ID", 0));
+            } else if(intent.getAction().toString().equals("VIDEO_DATA_READY")) {
+                displayData(intent.getIntExtra("LIBRARY_ID", 0), (ArrayList<VideoEntry>)intent.getSerializableExtra("VIDEO_DATA"));
             }
         }
     }

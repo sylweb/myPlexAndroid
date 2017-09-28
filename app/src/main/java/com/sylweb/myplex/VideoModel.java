@@ -1,5 +1,9 @@
 package com.sylweb.myplex;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+
 import java.util.ArrayList;
 
 /**
@@ -40,6 +44,30 @@ public class VideoModel {
             }
         }
         return all;
+    }
+
+    public static void askForUpdate(Context c, int libraryId) {
+        new ReadAllThread(c,libraryId).start();
+    }
+
+    public static class ReadAllThread extends Thread {
+
+        private int libraryId;
+        private Context context;
+
+        public ReadAllThread(Context c, int libraryId) {
+            this.context = c;
+            this.libraryId = libraryId;
+        }
+
+        @Override
+        public void run() {
+            ArrayList<VideoEntry> videos = getAllForLibrary(this.libraryId);
+            Intent intent = new Intent("VIDEO_DATA_READY");
+            intent.putExtra("VIDEO_DATA", videos);
+            intent.putExtra("LIBRARY_ID", this.libraryId);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
     }
 
 }

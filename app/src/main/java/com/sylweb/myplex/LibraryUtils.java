@@ -82,8 +82,8 @@ public class LibraryUtils {
 
 
             //Job finished so tell the observer(s)
-            Intent intent = new Intent("LibUpdate");
-            intent.putExtra("libId", lib.id);
+            Intent intent = new Intent("LIBRARY_SYNC_FINISHED");
+            intent.putExtra("LIBRARY_ID", lib.id);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
             if(unidentifiedFiles.size() > 0) {
