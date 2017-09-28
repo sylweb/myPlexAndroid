@@ -1,77 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/myLightGray"
-    tools:context="com.sylweb.myplex.VideoDetailsActivity">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/app_bar_main"/>
-
-    <ImageView
-        android:id="@+id/detailPoster"
-        android:layout_width="120dp"
-        android:layout_height="160dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="66dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_menu_films" />
-
-    <TextView
-        android:id="@+id/filmTitle"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="66dp"
-        android:text="film title"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        app:layout_constraintLeft_toRightOf="@+id/detailPoster"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@color/myLightGray"
+        tools:context="com.sylweb.myplex.VideoDetailsActivity">
 
-    <TextView
-        android:id="@+id/filmYear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="film year"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        app:layout_constraintLeft_toRightOf="@+id/detailPoster"
-        app:layout_constraintTop_toBottomOf="@+id/filmTitle" />
+        <ImageView
+            android:id="@+id/detailPoster"
+            android:layout_width="120dp"
+            android:layout_height="160dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@mipmap/ic_menu_films" />
 
-    <TextView
-        android:id="@+id/filmOverview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
-        android:text="TextView"
-        android:textColor="@android:color/black"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detailPoster" />
+        <TextView
+            android:id="@+id/filmTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="film title"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toRightOf="@+id/detailPoster"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/playButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/detailPoster"
-        app:layout_constraintLeft_toLeftOf="@+id/detailPoster"
-        app:layout_constraintRight_toRightOf="@+id/detailPoster"
-        app:layout_constraintTop_toTopOf="@+id/detailPoster"
-        app:srcCompat="@drawable/ic_menu_slideshow" />
+        <TextView
+            android:id="@+id/filmYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="film year"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toRightOf="@+id/detailPoster"
+            app:layout_constraintTop_toBottomOf="@+id/filmTitle" />
+
+        <TextView
+            android:id="@+id/filmOverview"
+            android:layout_width="0dp"
+            android:layout_height="1000dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="16dp"
+            android:text="TextView"
+            android:textColor="@android:color/black"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detailPoster" />
+
+        <ImageView
+            android:id="@+id/playButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/detailPoster"
+            app:layout_constraintLeft_toLeftOf="@+id/detailPoster"
+            app:layout_constraintRight_toRightOf="@+id/detailPoster"
+            app:layout_constraintTop_toTopOf="@+id/detailPoster"
+            app:srcCompat="@drawable/ic_menu_slideshow" />
 
 
-</android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

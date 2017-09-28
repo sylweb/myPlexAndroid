@@ -32,8 +32,7 @@
             android:name=".LibraryCreationActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".VideoDetailsActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".VideoDetailsActivity">
         </activity>
     </application>
 

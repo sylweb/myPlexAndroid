@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/myLightBlack"
+    android:background="@android:color/black"
     tools:context="com.sylweb.myplex.LibraryContentFragment">
 
     <ImageView
@@ -22,18 +22,18 @@
         android:id="@+id/library_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/myLightGray"
-        android:columnWidth="78dp"
+        android:background="@color/colorAccent"
+        android:columnWidth="100dp"
         android:numColumns="auto_fit"
+        android:paddingTop="8dp"
+        android:stretchMode="spacingWidthUniform"
+        android:verticalSpacing="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/syncImage"
         app:layout_constraintVertical_bias="0.0" />
+
 </android.support.constraint.ConstraintLayout>
 

@@ -40,6 +40,7 @@ public class LibraryUtils {
         public void run() {
             ArrayList<String> files = getAllFiles();
             ArrayList<Integer> readIds = new ArrayList<>();
+            ArrayList<String> unidentifiedFiles = new ArrayList<>();
             for(String filename : files) {
 
                 //Get video informations from TheMovieDB
@@ -55,6 +56,8 @@ public class LibraryUtils {
 
                     readIds.add(newVid.tmdb_id);
                 }
+
+                else unidentifiedFiles.add(filename);
             }
 
             //Purge old entries
@@ -82,6 +85,20 @@ public class LibraryUtils {
             Intent intent = new Intent("LibUpdate");
             intent.putExtra("libId", lib.id);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+            if(unidentifiedFiles.size() > 0) {
+                intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/html");
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"s.pequignot25@gmail.com"});
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Impossible d'identifier ces fichers");
+                String unidentied = "";
+                for (String filename : unidentifiedFiles) {
+                    unidentied = unidentied + filename + "\r\n";
+                }
+                intent.putExtra(Intent.EXTRA_TEXT, unidentied);
+
+                context.startActivity(Intent.createChooser(intent, "Envoyer un mail"));
+            }
         }
 
         private ArrayList<String> getAllFiles() {
