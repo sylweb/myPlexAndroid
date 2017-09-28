@@ -6,8 +6,6 @@
     android:background="@color/myLightBlack"
     tools:context="com.sylweb.myplex.LibraryContentFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <ImageView
         android:id="@+id/syncImage"
         android:layout_width="35dp"
@@ -29,12 +27,13 @@
         android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:background="@color/myLightGray"
+        android:columnWidth="78dp"
         android:numColumns="auto_fit"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/syncImage"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintVertical_bias="0.0" />
 </android.support.constraint.ConstraintLayout>
 

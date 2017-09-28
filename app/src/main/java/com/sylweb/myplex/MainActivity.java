@@ -54,6 +54,22 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.content_frame);
 
         loadLibraryList();
+
+        if(getIntent() != null && getIntent().getExtras() != null) {
+            int libId = getIntent().getIntExtra("LIBRARY_ID", 0);
+            if(libId > 0) {
+                showLibFragment(libId);
+            }
+        }
+    }
+
+    private void showLibFragment(int libId) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        LibraryContentFragment frag = new LibraryContentFragment();
+        frag.libraryId = libId;
+        frag.context = this;
+        ft.replace(R.id.content_frame, frag);
+        ft.commit();
     }
 
     private void loadLibraryList() {
@@ -70,12 +86,7 @@ public class MainActivity extends AppCompatActivity
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
         LibraryEntry item = (LibraryEntry) adapterView.getItemAtPosition(i);
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        LibraryContentFragment frag = new LibraryContentFragment();
-        frag.libraryId = item.id;
-        frag.context = this;
-        ft.replace(R.id.content_frame, frag);
-        ft.commit();
+        showLibFragment(item.id);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) drawer.closeDrawer(GravityCompat.START);
 
@@ -86,8 +97,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
     }
 

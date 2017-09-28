@@ -5,9 +5,6 @@
     <string name="navigation_drawer_close">Fermer la barre de navigation</string>
     <string name="action_settings">Configuration</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="image_location">/data/data/com.sylweb.myplex/posters/</string>
 
 </resources>

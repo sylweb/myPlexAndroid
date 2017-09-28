@@ -75,7 +75,7 @@ public class LibraryCreationActivity extends AppCompatActivity implements View.O
 
             final DirectoryChooserConfig config = DirectoryChooserConfig.builder()
                     .newDirectoryName("DirChooserSample")
-                    .initialDirectory("/mnt")
+                    .initialDirectory("/")
                     .allowReadOnlyDirectory(true)
                     .allowNewDirectoryNameModification(true)
                     .build();

@@ -13,13 +13,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
 
 
-public class LibraryContentFragment extends Fragment implements View.OnClickListener {
+public class LibraryContentFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemClickListener{
 
     public Context context;
     public Integer libraryId;
@@ -51,6 +55,7 @@ public class LibraryContentFragment extends Fragment implements View.OnClickList
 
         this.videos = VideoModel.getAllForLibrary(libraryId);
         this.myGridView.setAdapter(new LibraryContentAdapter(context, videos));
+        this.myGridView.setOnItemClickListener(this);
 
         this.refreshReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this.context).registerReceiver(refreshReceiver,
@@ -63,6 +68,14 @@ public class LibraryContentFragment extends Fragment implements View.OnClickList
     public void onClick(View view) {
         if(view.equals(this.syncButton) && !updating) {
             updating = true;
+            RotateAnimation anim= new RotateAnimation(0f,350f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+            anim.setInterpolator(new LinearInterpolator());
+            anim.setRepeatCount(Animation.INFINITE);
+            anim.setDuration(700);
+
+            // Start animating the image
+            syncButton.startAnimation(anim);
+
             LibraryUtils utils = new LibraryUtils();
             utils.updateLibrary(context,this.libraryId);
         }
@@ -74,6 +87,7 @@ public class LibraryContentFragment extends Fragment implements View.OnClickList
             ((LibraryContentAdapter) this.myGridView.getAdapter()).data = this.videos;
             ((LibraryContentAdapter) this.myGridView.getAdapter()).notifyDataSetChanged();
             this.updating = false;
+            syncButton.setAnimation(null);
         }
     }
 
@@ -98,6 +112,15 @@ public class LibraryContentFragment extends Fragment implements View.OnClickList
 
     public void onStop() {
         super.onStop();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        VideoEntry video = (VideoEntry) adapterView.getItemAtPosition(i);
+        Intent intent = new Intent(this.context, VideoDetailsActivity.class);
+        intent.putExtra("SELECTED_VIDEO", video);
+        intent.putExtra("LIBRARY_ID", this.libraryId);
+        startActivity(intent);
     }
 
     //Message receiver

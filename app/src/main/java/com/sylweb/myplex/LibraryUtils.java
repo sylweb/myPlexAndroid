@@ -58,16 +58,27 @@ public class LibraryUtils {
             }
 
             //Purge old entries
-            String query = "DELETE FROM video WHERE library_id =%d and tmdb_id not in(%s)";
-            String ids = "";
-            for(int i=0; i < readIds.size()-1;i++) {
-                ids = ids+readIds.get(i)+",";
+            String query = "";
+            if (readIds.size() > 0) {
+                query = "DELETE FROM video WHERE library_id =%d and tmdb_id not in(%s)";
+                if (readIds.size() > 1) {
+                    String ids = "";
+                    for (int i = 0; i < readIds.size() - 1; i++) {
+                        ids = ids + readIds.get(i) + ",";
+                    }
+                    ids = ids + readIds.get(readIds.size() - 1);
+                    query = String.format(query, lib.id, ids);
+                } else {
+                    String idToDelete = "" + readIds.get(readIds.size() - 1);
+                    query = String.format(query, lib.id, idToDelete);
+                }
+            } else {
+                query = "DELETE FROM video WHERE id > 0";
             }
-            ids = ids+readIds.get(readIds.size()-1);
-            query = String.format(query,lib.id,ids);
             DBManager.executeQuery(query);
 
-            //Job done so tell observer(s)
+
+            //Job finished so tell the observer(s)
             Intent intent = new Intent("LibUpdate");
             intent.putExtra("libId", lib.id);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
@@ -79,7 +90,7 @@ public class LibraryUtils {
             File[] f = directory.listFiles();
             for (int i = 0; i < f.length; i++)
             {
-                files.add(f[i].getName());
+                if(!f[i].isDirectory()) files.add(f[i].getName());
             }
             return files;
         }
@@ -88,7 +99,7 @@ public class LibraryUtils {
 
             String file_name = filename;
 
-            file_name = file_name.substring(0, filename.lastIndexOf("."));
+            if(filename.lastIndexOf(".") > 0) file_name = file_name.substring(0, filename.lastIndexOf("."));
             file_name = file_name.replace("[","");
             file_name = file_name.replace("]","");
             file_name = file_name.replace("{","");

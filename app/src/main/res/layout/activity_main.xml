@@ -10,7 +10,8 @@
 
     <include layout="@layout/frag_destination"/>
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
@@ -18,7 +19,7 @@
 
         <android.support.design.widget.NavigationView
             android:id="@+id/nav_view"
-            android:layout_width="304dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:background="@color/myLightBlack"
@@ -27,22 +28,19 @@
             app:menu="@menu/left_menu"
             app:itemIconTint="@color/white"
             app:itemTextColor="@color/white"
-            app:itemBackground="@color/myLightBlack"/>
+            app:itemBackground="@color/myLightBlack"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <ListView
             android:id="@+id/library_list"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@color/myLightBlack"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/nav_view"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintVertical_bias="1.0" />
+            android:layout_marginTop="8dp" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

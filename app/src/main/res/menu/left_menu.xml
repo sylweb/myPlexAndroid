@@ -9,7 +9,7 @@
             android:title="Ajouter une librairie" />
         <item
             android:id="@+id/delete_library"
-            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            android:icon="@android:drawable/ic_menu_delete"
             android:title="Supprimer une librairie" />
     </group>
 

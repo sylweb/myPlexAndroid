@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,7 +12,7 @@ import java.util.HashMap;
  * Created by sylvain on 26/09/2017.
  */
 
-public class VideoEntry {
+public class VideoEntry implements Serializable{
 
     public Integer id;
     public Integer tmdb_id;
