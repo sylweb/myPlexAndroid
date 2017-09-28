@@ -73,10 +73,14 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View view) {
         if(view.equals(this.playButton) || view.equals(this.poster)) {
+
+            //Play video using VLC, VLC is cool, it can play lot of different files and it can resume play where user stopped it
             if(video.file_url != null && !video.file_url.equals("")) {
                 File f = new File(video.file_url);
-                Intent intent = new Intent(Intent.ACTION_VIEW,  Uri.fromFile(f));
-                intent.setDataAndType( Uri.fromFile(f), "video/*");
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setPackage("org.videolan.vlc");
+                intent.putExtra("from_start", false); //Get back where we stopped last time
+                intent.setData(Uri.fromFile(f));
                 startActivity(intent);
             }
         }

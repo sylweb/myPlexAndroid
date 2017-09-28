@@ -23,16 +23,12 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 
 
-public class LibraryContentFragment extends Fragment implements View.OnClickListener , AdapterView.OnItemClickListener{
+public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener{
 
     public Context context;
     public Integer libraryId;
 
     private GridView myGridView;
-    private boolean updating = false;
-
-
-    private ImageView syncButton;
 
     protected MessageReceiver refreshReceiver;
 
@@ -50,8 +46,6 @@ public class LibraryContentFragment extends Fragment implements View.OnClickList
 
         this.view = inflater.inflate(R.layout.fragment_library_full_view, container, false);
         this.myGridView = view.findViewById(R.id.library_content);
-        this.syncButton = view.findViewById(R.id.syncImage);
-        this.syncButton.setOnClickListener(this);
 
         this.videos = VideoModel.getAllForLibrary(libraryId);
         this.myGridView.setAdapter(new LibraryContentAdapter(context, videos));
@@ -64,30 +58,14 @@ public class LibraryContentFragment extends Fragment implements View.OnClickList
         return view;
     }
 
-    @Override
-    public void onClick(View view) {
-        if(view.equals(this.syncButton) && !updating) {
-            updating = true;
-            RotateAnimation anim= new RotateAnimation(0f,350f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
-            anim.setInterpolator(new LinearInterpolator());
-            anim.setRepeatCount(Animation.INFINITE);
-            anim.setDuration(700);
-
-            // Start animating the image
-            syncButton.startAnimation(anim);
-
-            LibraryUtils utils = new LibraryUtils();
-            utils.updateLibrary(context,this.libraryId);
-        }
-    }
-
     private void updateData(Integer libId) {
         if(libId == this.libraryId) {
             this.videos = VideoModel.getAllForLibrary(libraryId);
             ((LibraryContentAdapter) this.myGridView.getAdapter()).data = this.videos;
             ((LibraryContentAdapter) this.myGridView.getAdapter()).notifyDataSetChanged();
-            this.updating = false;
-            syncButton.setAnimation(null);
+
+            //Indicate main activity that synchronization is finished
+            ((MainActivity)this.getActivity()).synchroFinished();
         }
     }
 

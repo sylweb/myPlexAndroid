@@ -2,6 +2,9 @@ package com.sylweb.myplex;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,7 +19,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import org.json.JSONObject;
@@ -25,10 +32,13 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener, View.OnClickListener {
 
     private ArrayList<LibraryEntry> libraryList;
     private ListView myList;
+    private ImageView syncImage;
+    private int currentLibraryId;
+    private boolean synchroRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +71,12 @@ public class MainActivity extends AppCompatActivity
                 showLibFragment(libId);
             }
         }
+
+        this.synchroRunning = false;
     }
 
     private void showLibFragment(int libId) {
+        this.currentLibraryId = libId;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         LibraryContentFragment frag = new LibraryContentFragment();
         frag.libraryId = libId;
@@ -104,6 +117,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        this.syncImage = new ImageView(this);
+        this.syncImage.setImageResource(R.mipmap.download);
+        this.syncImage.setColorFilter(Color.parseColor("#FFFFFFFF"), PorterDuff.Mode.SRC_ATOP);
+        this.syncImage.setOnClickListener(this);
+        (menu.findItem(R.id.sync)).setActionView(this.syncImage);
+        (menu.findItem(R.id.sync)).setVisible(true);
+
         return true;
     }
 
@@ -122,7 +143,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -138,18 +158,28 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public class TestThread extends Thread {
 
-        @Override
-        public void run() {
+    @Override
+    public void onClick(View view) {
 
-            //Example de recherche de tout les films du nom de fight club
-            //String url = "https://api.themoviedb.org/3/search/movie?api_key=c15ed3307384c1d73034f5fe889cd871&query=fight+club";
+        if(view.equals(this.syncImage) && !synchroRunning && currentLibraryId != 0) {
 
-            //Example de lecture de la fiche d'un film dont l'id est 550
-            //String url = "https://api.themoviedb.org/3/movie/550?api_key=c15ed3307384c1d73034f5fe889cd871&language=fr";
+            this.synchroRunning = true;
+            RotateAnimation anim = new RotateAnimation(0f, 350f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            anim.setInterpolator(new LinearInterpolator());
+            anim.setRepeatCount(Animation.INFINITE);
+            anim.setDuration(700);
 
+            this.syncImage.startAnimation(anim);
+
+            LibraryUtils utils = new LibraryUtils();
+            utils.updateLibrary(this,this.currentLibraryId);
         }
-
     }
+
+    public void synchroFinished() {
+        this.synchroRunning = false;
+        this.syncImage.setAnimation(null);
+    }
+
 }
