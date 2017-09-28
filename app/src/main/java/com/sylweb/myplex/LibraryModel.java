@@ -1,6 +1,5 @@
 package com.sylweb.myplex;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**

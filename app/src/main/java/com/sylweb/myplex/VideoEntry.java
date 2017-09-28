@@ -1,11 +1,6 @@
 package com.sylweb.myplex;
 
-import android.util.Log;
-
-import org.json.JSONObject;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
