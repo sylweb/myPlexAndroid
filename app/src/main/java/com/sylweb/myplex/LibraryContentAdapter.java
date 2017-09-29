@@ -51,8 +51,8 @@ public class LibraryContentAdapter extends BaseAdapter {
         ((TextView)(vi.findViewById(R.id.filmName))).setText(data.get(i).name);
 
         try {
-            Drawable d = Drawable.createFromPath(data.get(i).jpg_url);
-            ((ImageView)(vi.findViewById(R.id.affiche))).setImageDrawable(d);
+            Drawable poster = Drawable.createFromPath(data.get(i).jpg_url);
+            ((ImageView)(vi.findViewById(R.id.affiche))).setImageDrawable(poster);
         }
         catch (Exception ex) {
             Log.e("ERROR", ex.getClass().getName());

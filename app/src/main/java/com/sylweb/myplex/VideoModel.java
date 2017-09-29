@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by sylvain on 27/09/2017.
@@ -14,7 +15,8 @@ public class VideoModel {
 
     public static void saveEntry(VideoEntry vid) {
 
-        String query = "SELECT * FROM video WHERE tmdb_id = " + vid.tmdb_id;
+        String query = "SELECT * FROM video WHERE tmdb_id = %d AND library_id = %d";
+        query =String.format(query, vid.tmdb_id, vid.library_id) ;
         ArrayList results = DBManager.executeQuery(query);
         if(results ==null || results.size() < 1) {
             insertEntry(vid);
@@ -25,12 +27,20 @@ public class VideoModel {
         String query = "UPDATE video SET library_id=%d, name='%s', overview='%s',year='%s',file_url='%s',jpg_url='%s' WHERE tmdb_id = %d";
         query = String.format(query, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url, vid.tmdb_id);
         DBManager.executeQuery(query);
+
+        for(GenreEntry entry : vid.genres) {
+            GenreModel.saveGenreForVideo(entry, vid.tmdb_id);
+        }
     }
 
     public static void insertEntry(VideoEntry vid) {
-        String query = "INSERT INTO video(tmdb_id,library_id,name,overview,year,file_url,jpg_url) VALUES(%d,%d,'%s','%s','%s','%s','%s')";
-        query = String.format(query, vid.tmdb_id, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url);
+        String query = "INSERT INTO video(tmdb_id,library_id,name,overview,year,file_url,jpg_url,forced) VALUES(%d,%d,'%s','%s','%s','%s','%s',%d)";
+        query = String.format(query, vid.tmdb_id, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url,0);
         DBManager.executeQuery(query);
+
+        for(GenreEntry entry : vid.genres) {
+            GenreModel.saveGenreForVideo(entry, vid.tmdb_id);
+        }
     }
 
     public static ArrayList<VideoEntry> getAllForLibrary(Integer libraryId) {

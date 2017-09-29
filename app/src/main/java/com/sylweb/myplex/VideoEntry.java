@@ -1,6 +1,9 @@
 package com.sylweb.myplex;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -17,6 +20,8 @@ public class VideoEntry implements Serializable{
     public String year;
     public String file_url;
     public String jpg_url;
+
+    public ArrayList<GenreEntry> genres;
 
     public VideoEntry(Object data) {
         HashMap entry = (HashMap) data;

@@ -38,12 +38,21 @@ public class LibraryUtils {
 
         @Override
         public void run() {
+
+            //First update genre database from the movie DB
+            updateGenreDB();
+
+            //Then find all files in the library directory
             ArrayList<String> files = getAllFiles();
+
+
             ArrayList<Integer> readIds = new ArrayList<>();
             ArrayList<String> unidentifiedFiles = new ArrayList<>();
+
+            //For each found file...
             for(String filename : files) {
 
-                //If we already have this files in DB just skip it
+                //If we already have this file in DB for this library then skip it
                 String query = "SELECT id FROM video WHERE library_id = %d AND file_url like'%s'";
                 String fileURL = lib.url+"/"+filename;
                 query = String.format(query, lib.id, fileURL);
@@ -67,33 +76,12 @@ public class LibraryUtils {
                 else unidentifiedFiles.add(filename);
             }
 
-            //Purge old entries ! DON'T USE IT FOR THE MOMENT
-            /*String query = "";
-            if (readIds.size() > 0) {
-                query = "DELETE FROM video WHERE library_id =%d and tmdb_id not in(%s)";
-                if (readIds.size() > 1) {
-                    String ids = "";
-                    for (int i = 0; i < readIds.size() - 1; i++) {
-                        ids = ids + readIds.get(i) + ",";
-                    }
-                    ids = ids + readIds.get(readIds.size() - 1);
-                    query = String.format(query, lib.id, ids);
-                } else {
-                    String idToDelete = "" + readIds.get(readIds.size() - 1);
-                    query = String.format(query, lib.id, idToDelete);
-                }
-            } else {
-                query = "DELETE FROM video WHERE id > 0";
-            }
-            DBManager.executeQuery(query);*/
-
-
             //Job finished so tell the observer(s)
             Intent intent = new Intent("LIBRARY_SYNC_FINISHED");
             intent.putExtra("LIBRARY_ID", lib.id);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
-            //We will also build a list of all files that can't be identified and display it in google keep
+            //We also built a list of all files that couldn't be identified so display it in google keep
             if(unidentifiedFiles.size() > 0) {
                 intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
@@ -106,6 +94,34 @@ public class LibraryUtils {
                 intent.putExtra(Intent.EXTRA_TEXT, unidentied);
 
                 context.startActivity(Intent.createChooser(intent, "Afficher un texte"));
+            }
+        }
+
+        private void updateGenreDB() {
+
+            String url = "https://api.themoviedb.org/3/genre/movie/list?api_key=c15ed3307384c1d73034f5fe889cd871&language=fr-FR";
+
+            try {
+                JSONObject answer = HttpRequestHelper.executeGET(url);
+                JSONArray results = null;
+                if (answer != null) results = answer.getJSONArray("genres");
+                if (results != null && results.length() > 0) {
+
+
+                    for(int i=0; i < results.length(); i++) {
+
+                        JSONObject entry = (JSONObject) results.get(i);
+                        int id = (int) entry.get("id");
+                        String name = (String) entry.get("name");
+
+                        GenreEntry genre = new GenreEntry(id,name);
+                        GenreModel.save(genre);
+                    }
+
+                }
+            }
+            catch (Exception ex) {
+
             }
         }
 
@@ -177,6 +193,12 @@ public class LibraryUtils {
                         vid.overview = (String) entry.get("overview");
                         vid.overview = vid.overview.replace("'", "''");
 
+                        JSONArray genres = entry.getJSONArray("genre_ids");
+                        for(int i=0; i < genres.length(); i++) {
+                            int gId = genres.getInt(i);
+                            GenreEntry ge = GenreModel.getGenre(gId);
+                            if(ge != null) vid.genres.add(ge);
+                        }
 
                         String poster = (String) entry.get("poster_path");
                         poster = poster.replace("/", "");

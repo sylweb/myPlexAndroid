@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class VideoDetailsActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -39,8 +40,24 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
 
     private void loadData() {
         ((TextView) findViewById(R.id.filmTitle)).setText(video.name);
+
+        ArrayList<GenreEntry> genres = GenreModel.getGenreForVideo(video.tmdb_id);
+
+        if(genres != null && genres.size() > 0) {
+
+            String genreTxt = "Genre(s) : ";
+            for(GenreEntry genre : genres) {
+                genreTxt+=genre.name;
+                genreTxt += ",";
+            }
+            genreTxt = genreTxt.substring(0,genreTxt.lastIndexOf(","));
+            ((TextView) findViewById(R.id.filmGenres)).setText(genreTxt);
+        }
+        else {
+            ((TextView) findViewById(R.id.filmGenres)).setText("Genre : inconnu");
+        }
         ((TextView) findViewById(R.id.filmYear)).setText(video.year);
-        ((TextView) findViewById(R.id.filmOverview)).setText(video.overview);
+        ((TextView) findViewById(R.id.filmOverview)).setText("Synopsis : \r\n\r\n"+video.overview);
         try {
             Drawable d = Drawable.createFromPath(video.jpg_url);
             this.poster = (ImageView) findViewById(R.id.detailPoster);

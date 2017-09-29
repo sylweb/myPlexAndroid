@@ -15,7 +15,7 @@
         android:layout_marginTop="0dp"
         android:background="@android:color/black"
         android:gravity="center_horizontal"
-        android:text="TextView"
+        android:text="Chargement..."
         android:textColor="@color/white"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
