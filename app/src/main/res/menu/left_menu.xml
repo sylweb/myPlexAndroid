@@ -6,11 +6,11 @@
         <item
             android:id="@+id/add_library"
             android:icon="@android:drawable/ic_menu_add"
-            android:title="Ajouter une librairie" />
+            android:title="Ajouter une bibliothèque" />
         <item
             android:id="@+id/delete_library"
             android:icon="@android:drawable/ic_menu_delete"
-            android:title="Supprimer une librairie" />
+            android:title="Supp. une bibliothèque" />
     </group>
 
 </menu>

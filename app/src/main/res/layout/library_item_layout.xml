@@ -3,19 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="60dp"
+    android:background="@color/myLightBlack">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/libraryIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/ic_menu_films"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp" />
+        app:srcCompat="@mipmap/ic_menu_films" />
 
     <TextView
         android:id="@+id/itemName"
@@ -28,8 +29,8 @@
         android:text="TextView"
         android:textColor="@color/white"
         android:textColorLink="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-        app:layout_constraintLeft_toRightOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView2"
+        app:layout_constraintBottom_toBottomOf="@+id/libraryIcon"
+        app:layout_constraintLeft_toRightOf="@+id/libraryIcon"
+        app:layout_constraintTop_toTopOf="@+id/libraryIcon"
         app:layout_constraintVertical_bias="0.0" />
 </android.support.constraint.ConstraintLayout>

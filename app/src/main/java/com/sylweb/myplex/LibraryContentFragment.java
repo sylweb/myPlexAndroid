@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     public Context context;
     public Integer libraryId;
+    private TextView nbOfVideosTextView;
 
     private GridView myGridView;
 
@@ -39,15 +41,14 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
         this.view = inflater.inflate(R.layout.fragment_library_full_view, container, false);
         this.myGridView = view.findViewById(R.id.library_content);
+        this.nbOfVideosTextView = view.findViewById(R.id.nbOfVideos);
 
         this.myGridView.setAdapter(new LibraryContentAdapter(context, videos));
         this.myGridView.setOnItemClickListener(this);
 
         this.messageReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver,
-                new IntentFilter("LIBRARY_SYNC_FINISHED"));
-        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver,
-                new IntentFilter("VIDEO_DATA_READY"));
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_SYNC_FINISHED"));
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("VIDEO_DATA_READY"));
 
         updateData(this.libraryId);
 
@@ -57,13 +58,13 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
     private void updateData(Integer libId) {
         if(libId == this.libraryId) {
             VideoModel.askForUpdate(this.context, this.libraryId);
-            ((MainActivity) getActivity()).synchroFinished();
         }
     }
 
     private void displayData(Integer libraryId, ArrayList<VideoEntry> data) {
         if(libraryId == this.libraryId) {
             this.videos = data;
+            this.nbOfVideosTextView.setText(""+data.size()+" videos");
             ((LibraryContentAdapter) this.myGridView.getAdapter()).data = this.videos;
             ((LibraryContentAdapter) this.myGridView.getAdapter()).notifyDataSetChanged();
         }
@@ -84,10 +85,8 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
     public void onResume() {
         super.onResume();
         this.messageReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver,
-                new IntentFilter("LIBRARY_SYNC_FINISHED"));
-        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver,
-                new IntentFilter("VIDEO_DATA_READY"));
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_SYNC_FINISHED"));
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("VIDEO_DATA_READY"));
     }
 
     public void onStop() {

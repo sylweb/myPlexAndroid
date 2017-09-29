@@ -1,10 +1,14 @@
 package com.sylweb.myplex;
 
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView syncImage;
     private int currentLibraryId;
     private boolean synchroRunning;
+    private MessageReceiver messageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +58,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        findViewById(R.id.content_frame);
-
         loadLibraryList();
 
         if(getIntent() != null && getIntent().getExtras() != null) {
@@ -63,6 +66,15 @@ public class MainActivity extends AppCompatActivity
                 showLibFragment(libId);
             }
         }
+        else {
+            if(this.libraryList != null && this.libraryList.size() > 0) {
+                showLibFragment(libraryList.get(0).id);
+            }
+        }
+
+        this.messageReceiver = new MessageReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_SYNC_FINISHED"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_LIST_MODIFIED"));
 
         this.synchroRunning = false;
     }
@@ -89,9 +101,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
         LibraryEntry item = (LibraryEntry) adapterView.getItemAtPosition(i);
         showLibFragment(item.id);
+        ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
     }
 
     @Override
@@ -140,7 +152,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.add_library) {
             startActivity(new Intent(this, LibraryCreationActivity.class));
         } else if (id == R.id.delete_library) {
-
+            RemoveLibraryDialog diag = new RemoveLibraryDialog(this);
+            diag.show();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -166,9 +179,36 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void synchroFinished() {
-        this.synchroRunning = false;
-        this.syncImage.setAnimation(null);
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.messageReceiver = new MessageReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver,
+                new IntentFilter("LIBRARY_SYNC_FINISHED"));
+    }
+
+    //Message receiver
+    public class MessageReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(intent.getAction().toString().equals("LIBRARY_SYNC_FINISHED")) {
+                synchroRunning = false;
+                syncImage.setAnimation(null);
+            }
+            else if(intent.getAction().toString().equals("LIBRARY_LIST_MODIFIED")) {
+                libraryList = LibraryModel.getAll();
+                ((LibraryListAdapter)myList.getAdapter()).data = libraryList;
+                ((LibraryListAdapter)myList.getAdapter()).notifyDataSetChanged();
+            }
+        }
     }
 
 }

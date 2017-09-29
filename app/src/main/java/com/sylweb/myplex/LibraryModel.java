@@ -33,7 +33,7 @@ public class LibraryModel {
     }
 
     public static ArrayList<LibraryEntry> getAll() {
-        String query = "SELECT * FROM library ORDER BY name DESC";
+        String query = "SELECT * FROM library ORDER BY name ASC";
         ArrayList results = DBManager.executeQuery(query);
         ArrayList<LibraryEntry> all = new ArrayList<>();
         if(results!= null && results.size() > 0) {

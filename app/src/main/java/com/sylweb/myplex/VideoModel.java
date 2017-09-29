@@ -34,7 +34,7 @@ public class VideoModel {
     }
 
     public static ArrayList<VideoEntry> getAllForLibrary(Integer libraryId) {
-        String query = "SELECT * FROM video WHERE library_id = %d ORDER BY name DESC";
+        String query = "SELECT * FROM video WHERE library_id = %d ORDER BY name ASC";
         query = String.format(query, libraryId);
         ArrayList results = DBManager.executeQuery(query);
         ArrayList<VideoEntry> all = new ArrayList<>();

@@ -43,13 +43,20 @@ public class LibraryUtils {
             ArrayList<String> unidentifiedFiles = new ArrayList<>();
             for(String filename : files) {
 
-                //Get video informations from TheMovieDB
+                //If we already have this files in DB just skip it
+                String query = "SELECT id FROM video WHERE library_id = %d AND file_url like'%s'";
+                String fileURL = lib.url+"/"+filename;
+                query = String.format(query, lib.id, fileURL);
+                ArrayList results = DBManager.executeQuery(query);
+                if(results != null && results.size()>0) continue;
+
+                //If we don't have this vedio yet then try to gather information about it from TheMovieDB
                 VideoEntry newVid = getFilmWithInfo(filename);
                 if(newVid != null) {
 
                     //Complete with some local info
                     newVid.library_id = lib.id;
-                    newVid.file_url = lib.url+"/"+filename;
+                    newVid.file_url = fileURL;
 
                     //Insert movie in local DB
                     VideoModel.saveEntry(newVid);
@@ -60,8 +67,8 @@ public class LibraryUtils {
                 else unidentifiedFiles.add(filename);
             }
 
-            //Purge old entries
-            String query = "";
+            //Purge old entries ! DON'T USE IT FOR THE MOMENT
+            /*String query = "";
             if (readIds.size() > 0) {
                 query = "DELETE FROM video WHERE library_id =%d and tmdb_id not in(%s)";
                 if (readIds.size() > 1) {
@@ -78,7 +85,7 @@ public class LibraryUtils {
             } else {
                 query = "DELETE FROM video WHERE id > 0";
             }
-            DBManager.executeQuery(query);
+            DBManager.executeQuery(query);*/
 
 
             //Job finished so tell the observer(s)
@@ -86,18 +93,19 @@ public class LibraryUtils {
             intent.putExtra("LIBRARY_ID", lib.id);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
+            //We will also build a list of all files that can't be identified and display it in google keep
             if(unidentifiedFiles.size() > 0) {
                 intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/html");
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"s.pequignot25@gmail.com"});
+                intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Impossible d'identifier ces fichers");
+                intent.setPackage("com.google.android.keep");
                 String unidentied = "";
                 for (String filename : unidentifiedFiles) {
                     unidentied = unidentied + filename + "\r\n";
                 }
                 intent.putExtra(Intent.EXTRA_TEXT, unidentied);
 
-                context.startActivity(Intent.createChooser(intent, "Envoyer un mail"));
+                context.startActivity(Intent.createChooser(intent, "Afficher un texte"));
             }
         }
 
