@@ -7,21 +7,26 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 
-public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     public Context context;
     public Integer libraryId;
     private TextView nbOfVideosTextView;
+    public int gridPosition;
 
     private GridView myGridView;
 
@@ -67,6 +72,16 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
             this.nbOfVideosTextView.setText(""+data.size()+" videos");
             ((LibraryContentAdapter) this.myGridView.getAdapter()).data = this.videos;
             ((LibraryContentAdapter) this.myGridView.getAdapter()).notifyDataSetChanged();
+
+            if(this.gridPosition != 0) {
+                for(int i=0; i < this.videos.size(); i++) {
+                    VideoEntry video = this.videos.get(i);
+                    if(video.id == this.gridPosition) {
+                        this.myGridView.setSelection(i);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -99,6 +114,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         Intent intent = new Intent(this.context, VideoDetailsActivity.class);
         intent.putExtra("SELECTED_VIDEO", video);
         intent.putExtra("LIBRARY_ID", this.libraryId);
+        intent.putExtra("POSITION", video.id);
         startActivity(intent);
     }
 

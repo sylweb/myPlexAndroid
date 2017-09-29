@@ -50,7 +50,7 @@ public class LibraryUtils {
                 ArrayList results = DBManager.executeQuery(query);
                 if(results != null && results.size()>0) continue;
 
-                //If we don't have this vedio yet then try to gather information about it from TheMovieDB
+                //If we don't have this video yet, then try to gather information about it from TheMovieDB
                 VideoEntry newVid = getFilmWithInfo(filename);
                 if(newVid != null) {
 

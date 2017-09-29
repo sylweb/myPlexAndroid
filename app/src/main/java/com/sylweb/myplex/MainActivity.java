@@ -63,12 +63,13 @@ public class MainActivity extends AppCompatActivity
         if(getIntent() != null && getIntent().getExtras() != null) {
             int libId = getIntent().getIntExtra("LIBRARY_ID", 0);
             if(libId > 0) {
-                showLibFragment(libId);
+                int position = getIntent().getIntExtra("POSITION", 0);
+                showLibFragment(libId, position);
             }
         }
         else {
             if(this.libraryList != null && this.libraryList.size() > 0) {
-                showLibFragment(libraryList.get(0).id);
+                showLibFragment(libraryList.get(0).id, 0);
             }
         }
 
@@ -79,12 +80,13 @@ public class MainActivity extends AppCompatActivity
         this.synchroRunning = false;
     }
 
-    private void showLibFragment(int libId) {
+    private void showLibFragment(int libId, int position) {
         this.currentLibraryId = libId;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         LibraryContentFragment frag = new LibraryContentFragment();
         frag.libraryId = libId;
         frag.context = this;
+        frag.gridPosition = position;
         ft.replace(R.id.content_frame, frag);
         ft.commit();
     }
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         LibraryEntry item = (LibraryEntry) adapterView.getItemAtPosition(i);
-        showLibFragment(item.id);
+        showLibFragment(item.id, 0);
         ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
     }
 

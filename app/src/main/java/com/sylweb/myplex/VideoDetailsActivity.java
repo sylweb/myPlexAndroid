@@ -18,6 +18,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     private int libraryId;
     private ImageView playButton;
     private ImageView poster;
+    private int lastGridPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,8 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         Intent intent = getIntent();
         this.video= (VideoEntry) intent.getExtras().getSerializable("SELECTED_VIDEO");
         this.libraryId = intent.getIntExtra("LIBRARY_ID", 0);
+        this.lastGridPosition = intent.getIntExtra("POSITION", 0);
+
 
         loadData();
     }
@@ -56,6 +59,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     public boolean onSupportNavigateUp() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("LIBRARY_ID", libraryId);
+        intent.putExtra("POSITION", this.lastGridPosition);
         startActivity(intent);
         return true;
     }
@@ -64,6 +68,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("LIBRARY_ID", libraryId);
+        intent.putExtra("POSITION", this.lastGridPosition);
         startActivity(intent);
     }
 
