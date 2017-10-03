@@ -1,6 +1,8 @@
 package com.sylweb.myplex;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,8 +53,9 @@ public class LibraryContentAdapter extends BaseAdapter {
         ((TextView)(vi.findViewById(R.id.filmName))).setText(data.get(i).name);
 
         try {
-            Drawable poster = Drawable.createFromPath(data.get(i).jpg_url);
-            ((ImageView)(vi.findViewById(R.id.affiche))).setImageDrawable(poster);
+
+            Bitmap myBitmap = BitmapFactory.decodeFile(data.get(i).jpg_url);
+            ((ImageView)(vi.findViewById(R.id.affiche))).setImageBitmap(myBitmap);
         }
         catch (Exception ex) {
             Log.e("ERROR", ex.getClass().getName());

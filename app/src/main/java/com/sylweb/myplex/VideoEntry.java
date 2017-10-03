@@ -21,7 +21,7 @@ public class VideoEntry implements Serializable{
     public String file_url;
     public String jpg_url;
 
-    public ArrayList<GenreEntry> genres;
+    public ArrayList<GenreEntry> genres = new ArrayList<GenreEntry>();
 
     public VideoEntry(Object data) {
         HashMap entry = (HashMap) data;

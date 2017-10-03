@@ -3,6 +3,7 @@ package com.sylweb.myplex;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.json.JSONArray;
@@ -86,7 +87,7 @@ public class LibraryUtils {
                 intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Impossible d'identifier ces fichers");
-                intent.setPackage("com.google.android.keep");
+                //intent.setPackage("com.google.android.keep");
                 String unidentied = "";
                 for (String filename : unidentifiedFiles) {
                     unidentied = unidentied + filename + "\r\n";
@@ -133,6 +134,36 @@ public class LibraryUtils {
             {
                 if(!f[i].isDirectory()) files.add(f[i].getName());
             }
+
+            //TODO remove after debug
+            /*files.clear();
+            files.add("Fight club.mp4");
+            files.add("matrix.mp4");
+            files.add("matrix reloaded.mp4");
+            files.add("matrix revolution");
+            files.add("interstellar.mp4");
+            files.add("gravity.mp4");
+            files.add("mission to mars.mp4");
+            files.add("it.mp4");
+            files.add("mission cleopatre.mp4");
+            files.add("leaving las vegas.mp4");
+            files.add("a tombeau ouvert.mp4");
+            files.add("american sniper.mp4");
+            files.add("annabelle.mp4");
+            files.add("mama.mp4");
+            files.add("hypnose.mp4");
+            files.add("amytiville.mp4");
+            files.add("excalibur.mp4");
+            files.add("la verite si je mens.mp4");
+            files.add("carrie.mp4");
+            files.add("cujo.mp4");
+            files.add("la vie en rose.mp4");
+            files.add("il faut sauver le soldat ryan.mp4");
+            files.add("le vieu fusil.mp4");
+            files.add("hunger games mockingjay part 1.mp4");
+            files.add("hunger games mockingjay part 2.mp4");
+            files.add("hunger games embrasement.mp4");*/
+
             return files;
         }
 
@@ -211,6 +242,8 @@ public class LibraryUtils {
                         if (!directory.exists()) directory.mkdir();
                         if (!myjpg.exists()) myjpg.createNewFile();
                         OutputStream outputstream = new FileOutputStream(myjpg);
+                        mybitmap = getResizedBitmap(mybitmap, 120,180);
+
                         mybitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputstream);
                         outputstream.close();
 
@@ -227,6 +260,21 @@ public class LibraryUtils {
             return null;
         }
 
+        public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+            int width = bm.getWidth();
+            int height = bm.getHeight();
+            float scaleWidth = ((float) newWidth) / width;
+            float scaleHeight = ((float) newHeight) / height;
+            // CREATE A MATRIX FOR THE MANIPULATION
+            Matrix matrix = new Matrix();
+            // RESIZE THE BIT MAP
+            matrix.postScale(scaleWidth, scaleHeight);
+
+            // "RECREATE" THE NEW BITMAP
+            Bitmap resizedBitmap = Bitmap.createBitmap(
+                    bm, 0, 0, width, height, matrix, false);
+            return resizedBitmap;
+        }
 
         /**
          * Un algorithme très utile qui compare la proximité de deux chaines
