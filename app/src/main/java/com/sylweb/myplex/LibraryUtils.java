@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -76,7 +77,9 @@ public class LibraryUtils {
                         VideoModel.saveEntry(newVid);
 
                         readIds.add(newVid.tmdb_id);
-                    } else unidentifiedFiles.add(filename);
+                    } else {
+                        unidentifiedFiles.add(filename);
+                    }
                 }
 
                 //Job finished so tell the observer(s)
@@ -129,16 +132,16 @@ public class LibraryUtils {
 
         private ArrayList<String> getAllFiles() {
             ArrayList<String> files = new ArrayList<>();
-            /*File directory = new File(lib.url);
+            File directory = new File(lib.url);
             File[] f = directory.listFiles();
             for (int i = 0; i < f.length; i++)
             {
                 if(!f[i].isDirectory()) files.add(f[i].getName());
-            }*/
+            }
 
             //TODO remove after debug
-            files.add("3 Amis.avi");
-            files.add("4 garçons pleins d'avenir.avi");
+            /*files.add("3 Amis.avi");
+            files.add("quatre garçons pleins d'avenir.avi");
             files.add("8 mm.avi");
             files.add("8.Mile.avi");
             files.add("13_FANTOMES.AVI");
@@ -150,12 +153,12 @@ public class LibraryUtils {
             files.add("28.jours.Plus.tard.avi");
             files.add("28.Semaines.Plus.Tard.avi");
             files.add("40 ans toujours puceau.avi");
-            files.add("45.LiMiTED.avi");
+            files.add("Colt 45.avi");
             files.add("51.avi");
             files.add("60 secondes chrono.avi");
-            files.add("99F.avi");
+            files.add("99 Francs.avi");
             files.add("500.Days.Of.Summer.avi");
-            files.add("600.KG.d.Or.Pur.avi");
+            files.add("600 KG d'Or Pur.avi");
             files.add("2012.mkv");
             files.add("5150.Rue.Des.Ormes.avi");
             files.add("10000.avi");
@@ -165,13 +168,13 @@ public class LibraryUtils {
             files.add("A.Bittersweet.Life.avi");
             files.add("A.Guide.To.Recognizing.Your.Saints.avi");
             files.add("A.La.Derive.avi");
-            files.add("A.Perfect.Getaway.Unrated.avi");
+            files.add("A.Perfect.Getaway.avi");
             files.add("Ace Ventura en Afrique.avi");
             files.add("Alice.in.Wonderland.avi");
             files.add("Amanda.Knox..avi");
             files.add("American History X.avi");
             files.add("American Psycho 2.avi");
-            files.add("American Psycho1.avi");
+            files.add("American Psycho.avi");
             files.add("American Sniper.avi");
             files.add("American_Beauty.avi");
             files.add("American.Gangster.avi");
@@ -182,7 +185,7 @@ public class LibraryUtils {
             files.add("Arbitrage..avi");
             files.add("Argo.avi");
             files.add("Arnaques, Crimes et Botaniques.avi");
-            files.add("Arrête-moi si tu peux .AVI");
+            files.add("Arrête-moi si tu peux.AVI");
             files.add("Assaut sur le central 13.avi");
             files.add("Asterix Le Domaine Des Dieux.mkv");
             files.add("Asterix.Aux.Jeux.Olympiques.Film.avi");
@@ -297,34 +300,7 @@ public class LibraryUtils {
             files.add("Fame.avi");
             files.add("Fanny.avi");
             files.add("Faster.avi");
-            /*files.clear();
-            files.add("Fight club.mp4");
-            files.add("matrix.mp4");
-            files.add("matrix reloaded.mp4");
-            files.add("matrix revolution");
-            files.add("interstellar.mp4");
-            files.add("gravity.mp4");
-            files.add("mission to mars.mp4");
-            files.add("it.mp4");
-            files.add("mission cleopatre.mp4");
-            files.add("leaving las vegas.mp4");
-            files.add("a tombeau ouvert.mp4");
-            files.add("american sniper.mp4");
-            files.add("annabelle.mp4");
-            files.add("mama.mp4");
-            files.add("hypnose.mp4");
-            files.add("amytiville.mp4");
-            files.add("excalibur.mp4");
-            files.add("la verite si je mens.mp4");
-            files.add("carrie.mp4");
-            files.add("cujo.mp4");
-            files.add("la vie en rose.mp4");
-            files.add("il faut sauver le soldat ryan.mp4");
-            files.add("le vieu fusil.mp4");
-            files.add("hunger games mockingjay part 1.mp4");
-            files.add("hunger games mockingjay part 2.mp4");
-            files.add("hunger games embrasement.mp4");*/
-
+            */
             return files;
         }
 
@@ -340,7 +316,10 @@ public class LibraryUtils {
             file_name = file_name.replace("."," ");
             file_name = file_name.replace("_"," ");
             file_name = file_name.replace("."," ");
+            file_name = file_name.replace(","," ");
             file_name = file_name.replace(" ", "%20");
+            file_name = file_name.replace("'","%27");
+            file_name = file_name.trim();
 
             String url = "https://api.themoviedb.org/3/search/movie?api_key=c15ed3307384c1d73034f5fe889cd871&language=fr&query="+file_name;
 
@@ -350,6 +329,7 @@ public class LibraryUtils {
                 if(results != null && results.length() > 0) {
 
                     file_name = file_name.replace("%20", " ");
+                    file_name = filename.replace("%27","'");
                     file_name = file_name.toUpperCase();
 
                     int diff = 1000000;
@@ -403,9 +383,9 @@ public class LibraryUtils {
                         if (!directory.exists()) directory.mkdir();
                         if (!myjpg.exists()) myjpg.createNewFile();
                         OutputStream outputstream = new FileOutputStream(myjpg);
-                        mybitmap = getResizedBitmap(mybitmap, 120,180);
+                        mybitmap = getResizedBitmap(mybitmap, 240,360);
 
-                        mybitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputstream);
+                        mybitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputstream);
                         outputstream.close();
 
                         vid.jpg_url = context.getString(R.string.image_location) + poster;
@@ -414,6 +394,7 @@ public class LibraryUtils {
                     }
                 }
 
+            Log.d("Library utils ",file_name);
             return null;
         }
 
