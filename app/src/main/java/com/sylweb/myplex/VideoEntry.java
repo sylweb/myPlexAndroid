@@ -1,5 +1,6 @@
 package com.sylweb.myplex;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import java.io.Serializable;
@@ -20,6 +21,8 @@ public class VideoEntry implements Serializable{
     public String year;
     public String file_url;
     public String jpg_url;
+
+    public Bitmap tempImage;
 
     public ArrayList<GenreEntry> genres = new ArrayList<GenreEntry>();
 

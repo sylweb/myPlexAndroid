@@ -1,11 +1,11 @@
 package com.sylweb.myplex;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -136,6 +136,7 @@ public class LibraryUtils {
         }
 
         private ArrayList<String> getAllFiles() {
+
             ArrayList<String> files = new ArrayList<>();
             File directory = new File(lib.url);
             File[] f = directory.listFiles();
@@ -145,7 +146,7 @@ public class LibraryUtils {
             }
 
             //TODO remove after debug
-            files.add("3 Amis.avi");
+            /*files.add("3 Amis.avi");
             files.add("quatre garçons pleins d'avenir.avi");
             files.add("8 mm.avi");
             files.add("8.Mile.avi");
@@ -304,7 +305,7 @@ public class LibraryUtils {
             files.add("F.B.I Fausses Blondes.avi");
             files.add("Fame.avi");
             files.add("Fanny.avi");
-            files.add("Faster.avi");
+            files.add("Faster.avi");*/
 
             return files;
         }
@@ -401,25 +402,9 @@ public class LibraryUtils {
                     }
                 }
 
-            Log.d("Library utils ",file_name);
             return null;
         }
 
-        public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-            int width = bm.getWidth();
-            int height = bm.getHeight();
-            float scaleWidth = ((float) newWidth) / width;
-            float scaleHeight = ((float) newHeight) / height;
-            // CREATE A MATRIX FOR THE MANIPULATION
-            Matrix matrix = new Matrix();
-            // RESIZE THE BIT MAP
-            matrix.postScale(scaleWidth, scaleHeight);
-
-            // "RECREATE" THE NEW BITMAP
-            Bitmap resizedBitmap = Bitmap.createBitmap(
-                    bm, 0, 0, width, height, matrix, false);
-            return resizedBitmap;
-        }
 
         /**
          * Un algorithme très utile qui compare la proximité de deux chaines
@@ -472,5 +457,83 @@ public class LibraryUtils {
     }
 
 
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        return resizedBitmap;
+    }
+
+    public void getFilmsByName(Context c, String name) {
+
+        new SearchFilmThread(c,name).start();
+    }
+
+    public class SearchFilmThread extends Thread {
+
+        private String nameToSearch;
+        private Context context;
+
+        public SearchFilmThread(Context c, String name) {
+            this.nameToSearch = name;
+            this.context = c;
+        }
+
+        @Override
+        public void run() {
+            ArrayList <VideoEntry> films = new ArrayList<VideoEntry>();
+
+            try {
+
+                String filmName = nameToSearch.replace(" ","%20");
+                filmName = filmName.replace("'","%27");
+
+                String url = "https://api.themoviedb.org/3/search/movie?api_key=c15ed3307384c1d73034f5fe889cd871&language=fr&query="+filmName;
+
+                HttpRequestHelper http = new HttpRequestHelper();
+                JSONObject answer = http.executeGET(url);
+                JSONArray results = null;
+                if (answer != null) results = answer.getJSONArray("results");
+                if (results != null && results.length() > 0) {
+
+                    for (int i = 0; i < results.length(); i++) {
+
+                        JSONObject entry = (JSONObject) results.get(i);
+
+                        VideoEntry vid = new VideoEntry();
+                        vid.tmdb_id = (Integer) entry.get("id");
+                        vid.name = (String) entry.get("title");
+                        vid.year = ((String) entry.get("release_date")).substring(0, 4);
+
+                        String poster = (String) entry.get("poster_path");
+                        poster = poster.replace("/", "");
+
+                        Bitmap mybitmap = http.getPicture("https://image.tmdb.org/t/p/w500/" + poster);
+                        mybitmap = getResizedBitmap(mybitmap, 120, 180);
+                        vid.tempImage = mybitmap;
+
+                        films.add(vid);
+                    }
+                }
+            }
+            catch (Exception ex) {
+
+            }
+
+            Intent intent = new Intent("SEARCH_FINISHED");
+            intent.putExtra("DATA", films);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
+
+    }
 
 }

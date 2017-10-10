@@ -179,22 +179,22 @@ public class MainActivity extends AppCompatActivity
             this.syncImage.startAnimation(anim);
 
             LibraryUtils utils = new LibraryUtils();
-            utils.updateLibrary(this.getApplicationContext(),this.currentLibraryId);
+            utils.updateLibrary(this,this.currentLibraryId);
         }
     }
 
     @Override
     public void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
         super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         this.messageReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver,
-                new IntentFilter("LIBRARY_SYNC_FINISHED"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_SYNC_FINISHED"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_LIST_MODIFIED"));
     }
 
     //Message receiver

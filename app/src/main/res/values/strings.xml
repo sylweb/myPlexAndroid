@@ -6,5 +6,6 @@
     <string name="action_settings">Configuration</string>
 
     <string name="image_location">/data/data/com.sylweb.myplex/posters/</string>
+    <string name="change_film">Modifier la fiche</string>
 
 </resources>

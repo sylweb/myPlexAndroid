@@ -121,6 +121,12 @@ public class LibraryCreationActivity extends AppCompatActivity implements View.O
         return true;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        finish();
+    }
+
     private void returnToPreviousActivity() {
         startActivity(new Intent(this, MainActivity.class));
     }

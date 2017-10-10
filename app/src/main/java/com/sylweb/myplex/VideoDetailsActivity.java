@@ -1,27 +1,34 @@
 package com.sylweb.myplex;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 
-public class VideoDetailsActivity extends AppCompatActivity implements View.OnClickListener{
+public class VideoDetailsActivity extends AppCompatActivity implements View.OnClickListener, MenuItem.OnMenuItemClickListener{
 
     private VideoEntry video;
     private int libraryId;
     private ImageView playButton;
     private ImageView poster;
     private int lastGridPosition;
+    private MenuItem changeFilmItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +42,6 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         this.video= (VideoEntry) intent.getExtras().getSerializable("SELECTED_VIDEO");
         this.libraryId = intent.getIntExtra("LIBRARY_ID", 0);
         this.lastGridPosition = intent.getIntExtra("POSITION", 0);
-
 
         loadData();
     }
@@ -76,6 +82,18 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.detail_menu, menu);
+        MenuItem changeFilmMenu;
+        this.changeFilmItem = menu.findItem(R.id.change_film);
+        this.changeFilmItem.setVisible(true);
+        this.changeFilmItem.setOnMenuItemClickListener(this);
+
+        return true;
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("LIBRARY_ID", libraryId);
@@ -94,12 +112,8 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onPause() {
-        this.poster = null;
-        this.video = null;
-        this.playButton = null;
-        finish();
-        Runtime.getRuntime().gc();
         super.onPause();
+        finish();
     }
 
     @Override
@@ -108,13 +122,26 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
 
             //Play video using VLC, VLC is cool, it can play lot of different files and it can resume play where user stopped it
             if(video.file_url != null && !video.file_url.equals("")) {
-                File f = new File(video.file_url);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setPackage("org.videolan.vlc");
-                intent.putExtra("from_start", false); //Get back where we stopped last time
-                intent.setData(Uri.fromFile(f));
-                startActivity(intent);
+                try {
+                    File f = new File(video.file_url);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setPackage("org.videolan.vlc");
+                    intent.putExtra("from_start", false); //Get back where we stopped last time
+                    intent.setData(Uri.fromFile(f));
+                    startActivity(intent);
+                }
+                catch(ActivityNotFoundException ex) {
+                    Toast.makeText(this, "Veuillez installer VLC", Toast.LENGTH_LONG).show();
+                }
             }
         }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        Intent intent = new Intent(this, FilmSelectionActivity.class);
+        intent.putExtra("FILE_NAME", video.file_url);
+        startActivity(intent);
+        return false;
     }
 }
