@@ -37,7 +37,8 @@ public class LibraryUtils {
 
         public UpdateThread(Integer id, Context c) {
             context = c;
-            lib = LibraryModel.getFromId(id);
+            LibraryModel mod = new LibraryModel();
+            lib = mod.getFromId(id);
         }
 
         @Override
@@ -61,7 +62,8 @@ public class LibraryUtils {
                     String fileURL = lib.url + "/" + filename;
                     fileURL = fileURL.replace("'","''");
                     query = String.format(query, lib.id, fileURL);
-                    ArrayList results = DBManager.executeQuery(query);
+                    DBManager db = new DBManager();
+                    ArrayList results = db.executeQuery(query);
                     if (results != null && results.size() > 0) continue;
 
                     //If we don't have this video yet, then try to gather information about it from TheMovieDB
@@ -74,7 +76,8 @@ public class LibraryUtils {
                         newVid.file_url = newVid.file_url.replace("'","''");
 
                         //Insert movie in local DB
-                        VideoModel.saveEntry(newVid);
+                        VideoModel mod = new VideoModel();
+                        mod.saveEntry(newVid);
 
                         readIds.add(newVid.tmdb_id);
                     } else {
@@ -111,7 +114,8 @@ public class LibraryUtils {
 
             String url = "https://api.themoviedb.org/3/genre/movie/list?api_key=c15ed3307384c1d73034f5fe889cd871&language=fr-FR";
 
-                JSONObject answer = HttpRequestHelper.executeGET(url);
+                HttpRequestHelper http = new HttpRequestHelper();
+                JSONObject answer = http.executeGET(url);
                 JSONArray results = null;
                 if (answer != null) results = answer.getJSONArray("genres");
                 if (results != null && results.length() > 0) {
@@ -124,7 +128,8 @@ public class LibraryUtils {
                         String name = (String) entry.get("name");
 
                         GenreEntry genre = new GenreEntry(id,name);
-                        GenreModel.save(genre);
+                        GenreModel mod = new GenreModel();
+                        mod.save(genre);
                     }
 
                 }
@@ -140,7 +145,7 @@ public class LibraryUtils {
             }
 
             //TODO remove after debug
-            /*files.add("3 Amis.avi");
+            files.add("3 Amis.avi");
             files.add("quatre garçons pleins d'avenir.avi");
             files.add("8 mm.avi");
             files.add("8.Mile.avi");
@@ -300,7 +305,7 @@ public class LibraryUtils {
             files.add("Fame.avi");
             files.add("Fanny.avi");
             files.add("Faster.avi");
-            */
+
             return files;
         }
 
@@ -323,7 +328,8 @@ public class LibraryUtils {
 
             String url = "https://api.themoviedb.org/3/search/movie?api_key=c15ed3307384c1d73034f5fe889cd871&language=fr&query="+file_name;
 
-                JSONObject answer = HttpRequestHelper.executeGET(url);
+                HttpRequestHelper http = new HttpRequestHelper();
+                JSONObject answer = http.executeGET(url);
                 JSONArray results = null;
                 if(answer != null) results = answer.getJSONArray("results");
                 if(results != null && results.length() > 0) {
@@ -368,14 +374,16 @@ public class LibraryUtils {
                         JSONArray genres = entry.getJSONArray("genre_ids");
                         for(int i=0; i < genres.length(); i++) {
                             int gId = genres.getInt(i);
-                            GenreEntry ge = GenreModel.getGenre(gId);
+
+                            GenreModel mod = new GenreModel();
+                            GenreEntry ge = mod.getGenre(gId);
                             if(ge != null) vid.genres.add(ge);
                         }
 
                         String poster = (String) entry.get("poster_path");
                         poster = poster.replace("/", "");
 
-                        Bitmap mybitmap = HttpRequestHelper.getPicture("https://image.tmdb.org/t/p/w500/" + poster);
+                        Bitmap mybitmap = http.getPicture("https://image.tmdb.org/t/p/w500/" + poster);
 
                         File myjpg = new File(context.getString(R.string.image_location), poster);
 
@@ -384,8 +392,7 @@ public class LibraryUtils {
                         if (!myjpg.exists()) myjpg.createNewFile();
                         OutputStream outputstream = new FileOutputStream(myjpg);
                         mybitmap = getResizedBitmap(mybitmap, 240,360);
-
-                        mybitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputstream);
+                        mybitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputstream);
                         outputstream.close();
 
                         vid.jpg_url = context.getString(R.string.image_location) + poster;

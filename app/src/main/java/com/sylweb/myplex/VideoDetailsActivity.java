@@ -1,6 +1,8 @@
 package com.sylweb.myplex;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -41,7 +43,8 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     private void loadData() {
         ((TextView) findViewById(R.id.filmTitle)).setText(video.name);
 
-        ArrayList<GenreEntry> genres = GenreModel.getGenreForVideo(video.tmdb_id);
+        GenreModel mod = new GenreModel();
+        ArrayList<GenreEntry> genres = mod.getGenreForVideo(video.tmdb_id);
 
         if(genres != null && genres.size() > 0) {
 
@@ -59,9 +62,9 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         ((TextView) findViewById(R.id.filmYear)).setText(video.year);
         ((TextView) findViewById(R.id.filmOverview)).setText("Synopsis : \r\n\r\n"+video.overview);
         try {
-            Drawable d = Drawable.createFromPath(video.jpg_url);
+            Bitmap myBitmap = BitmapFactory.decodeFile(video.jpg_url);
             this.poster = (ImageView) findViewById(R.id.detailPoster);
-            this.poster.setImageDrawable(d);
+            this.poster.setImageBitmap(myBitmap);
             this.poster.setOnClickListener(this);
         }
         catch (Exception ex) {
@@ -87,6 +90,16 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         intent.putExtra("LIBRARY_ID", libraryId);
         intent.putExtra("POSITION", this.lastGridPosition);
         startActivity(intent);
+    }
+
+    @Override
+    public void onPause() {
+        this.poster = null;
+        this.video = null;
+        this.playButton = null;
+        finish();
+        Runtime.getRuntime().gc();
+        super.onPause();
     }
 
     @Override

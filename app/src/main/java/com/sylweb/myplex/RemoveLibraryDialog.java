@@ -55,7 +55,8 @@ public class RemoveLibraryDialog extends Dialog implements View.OnClickListener 
         this.libSelector = findViewById(R.id.libSelector);
 
         //Load library list
-        this.libraries = LibraryModel.getAll();
+        LibraryModel mod = new LibraryModel();
+        this.libraries = mod.getAll();
 
         //Populate the spinner
         this.libSelector.setAdapter(new LibraryListAdapter(this.getContext(), libraries));
@@ -68,7 +69,8 @@ public class RemoveLibraryDialog extends Dialog implements View.OnClickListener 
             this.dismiss();
         }
         else if(view.equals(deleteButton)) {
-            LibraryModel.removeLibrary(((LibraryEntry)this.libSelector.getSelectedItem()).id);
+            LibraryModel mod = new LibraryModel();
+            mod.removeLibrary(((LibraryEntry)this.libSelector.getSelectedItem()).id);
             Intent intent = new Intent("LIBRARY_LIST_MODIFIED");
             LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(intent);
             this.dismiss();

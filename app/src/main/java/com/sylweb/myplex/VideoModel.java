@@ -13,40 +13,47 @@ import java.util.HashMap;
 
 public class VideoModel {
 
-    public static void saveEntry(VideoEntry vid) {
+    public void saveEntry(VideoEntry vid) {
 
         String query = "SELECT * FROM video WHERE tmdb_id = %d AND library_id = %d";
         query =String.format(query, vid.tmdb_id, vid.library_id) ;
-        ArrayList results = DBManager.executeQuery(query);
+        DBManager db = new DBManager();
+        ArrayList results = db.executeQuery(query);
         if(results ==null || results.size() < 1) {
             insertEntry(vid);
         }else updateEntry(vid);
     }
 
-    public static void updateEntry(VideoEntry vid) {
+    public void updateEntry(VideoEntry vid) {
         String query = "UPDATE video SET library_id=%d, name='%s', overview='%s',year='%s',file_url='%s',jpg_url='%s' WHERE tmdb_id = %d";
         query = String.format(query, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url, vid.tmdb_id);
-        DBManager.executeQuery(query);
+
+        DBManager db = new DBManager();
+        db.executeQuery(query);
 
         for(GenreEntry entry : vid.genres) {
-            GenreModel.saveGenreForVideo(entry, vid.tmdb_id);
+            GenreModel mod = new GenreModel();
+            mod.saveGenreForVideo(entry, vid.tmdb_id);
         }
     }
 
-    public static void insertEntry(VideoEntry vid) {
+    public void insertEntry(VideoEntry vid) {
         String query = "INSERT INTO video(tmdb_id,library_id,name,overview,year,file_url,jpg_url,forced) VALUES(%d,%d,'%s','%s','%s','%s','%s',%d)";
         query = String.format(query, vid.tmdb_id, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url,0);
-        DBManager.executeQuery(query);
+        DBManager db = new DBManager();
+        db.executeQuery(query);
 
         for(GenreEntry entry : vid.genres) {
-            GenreModel.saveGenreForVideo(entry, vid.tmdb_id);
+            GenreModel mod = new GenreModel();
+            mod.saveGenreForVideo(entry, vid.tmdb_id);
         }
     }
 
-    public static ArrayList<VideoEntry> getAllForLibrary(Integer libraryId) {
+    public ArrayList<VideoEntry> getAllForLibrary(Integer libraryId) {
         String query = "SELECT * FROM video WHERE library_id = %d ORDER BY name ASC";
         query = String.format(query, libraryId);
-        ArrayList results = DBManager.executeQuery(query);
+        DBManager db = new DBManager();
+        ArrayList results = db.executeQuery(query);
         ArrayList<VideoEntry> all = new ArrayList<>();
         if(results != null && results.size() > 0) {
             for(int i=0; i < results.size(); i++) {
@@ -56,11 +63,11 @@ public class VideoModel {
         return all;
     }
 
-    public static void askForUpdate(Context c, int libraryId) {
+    public void askForUpdate(Context c, int libraryId) {
         new ReadAllThread(c,libraryId).start();
     }
 
-    public static class ReadAllThread extends Thread {
+    public class ReadAllThread extends Thread {
 
         private int libraryId;
         private Context context;

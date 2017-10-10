@@ -21,7 +21,7 @@ public class LibraryListAdapter extends BaseAdapter {
 
     public ArrayList<LibraryEntry> data;
     private Context context;
-    private static LayoutInflater inflater = null;
+    private LayoutInflater inflater = null;
 
     public LibraryListAdapter(Context context, ArrayList<LibraryEntry> data) {
         this.data = data;

@@ -21,9 +21,9 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class HttpRequestHelper {
 
-    private static final int timeout = 10000;
+    private int timeout = 10000;
 
-    public static JSONObject executeGET(String request) {
+    public JSONObject executeGET(String request) {
         URL url = null;
         JSONObject results = null;
         try {
@@ -83,7 +83,7 @@ public class HttpRequestHelper {
         return results;
     }
 
-    public static Bitmap getPicture(String request) {
+    public Bitmap getPicture(String request) {
         URL url = null;
         try {
             url = new URL(request);
@@ -142,7 +142,7 @@ public class HttpRequestHelper {
 
     }
 
-    private static String readStream(InputStream stream) throws IOException {
+    private String readStream(InputStream stream) throws IOException {
 
         Reader reader = new InputStreamReader(stream, "UTF-8");
 

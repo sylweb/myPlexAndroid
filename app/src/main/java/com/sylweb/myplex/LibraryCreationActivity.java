@@ -89,9 +89,10 @@ public class LibraryCreationActivity extends AppCompatActivity implements View.O
         }
         else if(view.equals(this.okButton)) {
             //Check that library name is ok
-            if(LibraryModel.isNameAvailable(this.libraryNameField.getText().toString()) && !this.libraryNameField.getText().toString().equals("")) {
+            LibraryModel mod = new LibraryModel();
+            if(mod.isNameAvailable(this.libraryNameField.getText().toString()) && !this.libraryNameField.getText().toString().equals("")) {
                 LibraryEntry newLib = new LibraryEntry(this.libraryNameField.getText().toString(), this.libraryDirectoryField.getText().toString());
-                LibraryModel.saveEntry(newLib);
+                mod.saveEntry(newLib);
                 returnToPreviousActivity();
             }
             else {

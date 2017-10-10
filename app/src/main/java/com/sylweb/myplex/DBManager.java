@@ -23,20 +23,19 @@ import java.util.HashMap;
 
 public class DBManager {
 
-    private static String DB_PATH = "/data/data/com.sylweb.myplex/databases/";
-    private static String DB_NAME = "local_video_db.sqlite";
-    private static SQLiteDatabase myDB;
-    public static boolean dbOpened;
+    private String DB_PATH = "/data/data/com.sylweb.myplex/databases/";
+    private String DB_NAME = "local_video_db.sqlite";
+    private SQLiteDatabase myDB;
+    public boolean dbOpened;
 
-    public static boolean initDB(Context context)
+    public boolean initDB(Context context)
     {
         boolean test =checkDB(context);
-        openDB();
         return test;
     }
 
     /** This method open database for operations **/
-    private static void openDB() {
+    private void openDB() {
         String mPath = DB_PATH + DB_NAME;
         myDB = SQLiteDatabase.openDatabase(mPath, null,
                 SQLiteDatabase.OPEN_READWRITE);
@@ -44,15 +43,15 @@ public class DBManager {
     }
 
     /** This method close database connection and released occupied memory **/
-    public static void closeDB() {
+    public void closeDB() {
         if (myDB != null)
             myDB.close();
         SQLiteDatabase.releaseMemory();
         dbOpened = false;
     }
 
-    public static ArrayList executeQuery(String query, String... args) {
-
+    public ArrayList executeQuery(String query, String... args) {
+        openDB();
         ArrayList entries = new ArrayList();
         Cursor results = myDB.rawQuery(query, args);
         while(results.moveToNext()) {
@@ -63,17 +62,11 @@ public class DBManager {
             entries.add(entry);
         }
         results.close();
+        closeDB();
         return entries;
     }
 
-    public static String executeInsert(String tableName, ContentValues values) {
-        openDB();
-        long insertedId = myDB.insert(tableName, null, values);
-        closeDB();
-        return String.format("%ld", insertedId);
-    }
-
-    private static boolean checkDB(Context context) {
+    private boolean checkDB(Context context) {
 
         boolean createOK = createDBIfNeeded();
         if(!createOK) return false;
@@ -120,7 +113,7 @@ public class DBManager {
         }
     }
 
-    private static void updateDB(int patchVersion, Context context) {
+    private void updateDB(int patchVersion, Context context) {
         switch(patchVersion) {
             case 1 : {
                 dbPatch_V2();
@@ -142,15 +135,15 @@ public class DBManager {
         }
     }
 
-    private static void dbPatch_V2() {
+    private void dbPatch_V2() {
 
     }
 
-    private static void dbPatch_V3() {
+    private void dbPatch_V3() {
 
     }
 
-    private static boolean copyDB(Context context) throws IOException {
+    private boolean copyDB(Context context) throws IOException {
         try {
 
             InputStream mInputStream = context.getAssets().open(DB_NAME);
@@ -171,7 +164,7 @@ public class DBManager {
         return true;
     }
 
-    private static boolean createDBIfNeeded() {
+    private boolean createDBIfNeeded() {
         try {
             final String mPath = DB_PATH + DB_NAME;
             final File file = new File(mPath);
@@ -183,7 +176,7 @@ public class DBManager {
         }
     }
 
-    private static boolean createDBFile() {
+    private boolean createDBFile() {
         try {
             File file = new File(DB_PATH+File.separator);
             if(!file.exists()) file.mkdirs();

@@ -22,7 +22,7 @@ public class LibraryContentAdapter extends BaseAdapter {
 
     public ArrayList<VideoEntry> data;
 
-    private static LayoutInflater inflater = null;
+    private LayoutInflater inflater = null;
 
     public LibraryContentAdapter(Context context, ArrayList<VideoEntry> data) {
         this.data = data;

@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         //First init local DB
-        DBManager.initDB(this);
+        DBManager db = new DBManager();
+        db.initDB(this.getApplicationContext());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         LibraryContentFragment frag = new LibraryContentFragment();
         frag.libraryId = libId;
-        frag.context = this;
+        frag.context = this.getApplicationContext();
         frag.gridPosition = position;
         ft.replace(R.id.content_frame, frag);
         ft.commit();
@@ -93,7 +94,8 @@ public class MainActivity extends AppCompatActivity
 
     private void loadLibraryList() {
 
-        this.libraryList = LibraryModel.getAll();
+        LibraryModel mod = new LibraryModel();
+        this.libraryList = mod.getAll();
         if(libraryList != null) {
             this.myList = (ListView) findViewById(R.id.library_list);
             this.myList.setAdapter(new LibraryListAdapter(this, this.libraryList));
@@ -177,7 +179,7 @@ public class MainActivity extends AppCompatActivity
             this.syncImage.startAnimation(anim);
 
             LibraryUtils utils = new LibraryUtils();
-            utils.updateLibrary(this,this.currentLibraryId);
+            utils.updateLibrary(this.getApplicationContext(),this.currentLibraryId);
         }
     }
 
@@ -206,7 +208,8 @@ public class MainActivity extends AppCompatActivity
                 syncImage.setAnimation(null);
             }
             else if(intent.getAction().toString().equals("LIBRARY_LIST_MODIFIED")) {
-                libraryList = LibraryModel.getAll();
+                LibraryModel mod = new LibraryModel();
+                libraryList = mod.getAll();
                 ((LibraryListAdapter)myList.getAdapter()).data = libraryList;
                 ((LibraryListAdapter)myList.getAdapter()).notifyDataSetChanged();
             }

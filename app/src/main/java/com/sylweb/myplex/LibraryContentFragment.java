@@ -1,6 +1,8 @@
 package com.sylweb.myplex;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,8 +36,6 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     private View view;
 
-    private ArrayList<VideoEntry> videos = new ArrayList<>();
-
     public LibraryContentFragment() {
         // Required empty public constructor
     }
@@ -48,7 +48,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         this.myGridView = view.findViewById(R.id.library_content);
         this.nbOfVideosTextView = view.findViewById(R.id.nbOfVideos);
 
-        this.myGridView.setAdapter(new LibraryContentAdapter(context, videos));
+        this.myGridView.setAdapter(new LibraryContentAdapter(context, new ArrayList<VideoEntry>()));
         this.myGridView.setOnItemClickListener(this);
 
         this.messageReceiver = new MessageReceiver();
@@ -62,20 +62,22 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     private void updateData(Integer libId) {
         if(libId == this.libraryId) {
-            VideoModel.askForUpdate(this.context, this.libraryId);
+            VideoModel mod = new VideoModel();
+            mod.askForUpdate(this.context, this.libraryId);
         }
     }
 
     private void displayData(Integer libraryId, ArrayList<VideoEntry> data) {
         if(libraryId == this.libraryId) {
-            this.videos = data;
             this.nbOfVideosTextView.setText(""+data.size()+" videos");
-            ((LibraryContentAdapter) this.myGridView.getAdapter()).data = this.videos;
-            ((LibraryContentAdapter) this.myGridView.getAdapter()).notifyDataSetChanged();
+            if(this.myGridView == null) {
+
+            }
+            this.myGridView.setAdapter(new LibraryContentAdapter(context, data));
 
             if(this.gridPosition != 0) {
-                for(int i=0; i < this.videos.size(); i++) {
-                    VideoEntry video = this.videos.get(i);
+                for(int i=0; i < data.size(); i++) {
+                    VideoEntry video = data.get(i);
                     if(video.id == this.gridPosition) {
                         this.myGridView.setSelection(i);
                         break;
@@ -93,6 +95,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
     @Override
     public void onPause() {
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(messageReceiver);
+        this.myGridView.setAdapter(null);
         super.onPause();
     }
 
@@ -126,7 +129,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
             if(intent.getAction().toString().equals("LIBRARY_SYNC_FINISHED")) {
                 updateData(intent.getIntExtra("LIBRARY_ID", 0));
-            } else if(intent.getAction().toString().equals("VIDEO_DATA_READY")) {
+            }else if(intent.getAction().toString().equals("VIDEO_DATA_READY")) {
                 displayData(intent.getIntExtra("LIBRARY_ID", 0), (ArrayList<VideoEntry>)intent.getSerializableExtra("VIDEO_DATA"));
             }
         }
