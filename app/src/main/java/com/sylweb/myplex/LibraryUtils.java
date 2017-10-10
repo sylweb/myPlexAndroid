@@ -1,6 +1,5 @@
 package com.sylweb.myplex;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,6 +27,11 @@ public class LibraryUtils {
         this.context = context;
         UpdateThread thread = new UpdateThread(libraryId,context);
         thread.start();
+    }
+
+    public void getFilmsByName(Context c, String name) {
+
+        new SearchFilmThread(c,name).start();
     }
 
     public class UpdateThread extends Thread {
@@ -473,10 +477,6 @@ public class LibraryUtils {
         return resizedBitmap;
     }
 
-    public void getFilmsByName(Context c, String name) {
-
-        new SearchFilmThread(c,name).start();
-    }
 
     public class SearchFilmThread extends Thread {
 
