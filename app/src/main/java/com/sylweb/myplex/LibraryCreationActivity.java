@@ -77,7 +77,7 @@ public class LibraryCreationActivity extends AppCompatActivity implements View.O
                     .newDirectoryName("DirChooserSample")
                     .initialDirectory("/")
                     .allowReadOnlyDirectory(true)
-                    .allowNewDirectoryNameModification(true)
+                    .allowNewDirectoryNameModification(false)
                     .build();
 
             chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
@@ -124,7 +124,6 @@ public class LibraryCreationActivity extends AppCompatActivity implements View.O
     @Override
     public void onPause() {
         super.onPause();
-        finish();
     }
 
     private void returnToPreviousActivity() {

@@ -4,9 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,6 +26,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     private ImageView poster;
     private int lastGridPosition;
     private MenuItem changeFilmItem;
+    private MenuItem deleteFilmItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +48,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         ((TextView) findViewById(R.id.filmTitle)).setText(video.name);
 
         GenreModel mod = new GenreModel();
-        ArrayList<GenreEntry> genres = mod.getGenreForVideo(video.tmdb_id);
+        ArrayList<GenreEntry> genres = mod.getGenreForVideo(video.id);
 
         if(genres != null && genres.size() > 0) {
 
@@ -85,10 +83,13 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.detail_menu, menu);
-        MenuItem changeFilmMenu;
         this.changeFilmItem = menu.findItem(R.id.change_film);
         this.changeFilmItem.setVisible(true);
         this.changeFilmItem.setOnMenuItemClickListener(this);
+
+        this.deleteFilmItem = menu.findItem(R.id.delete_film);
+        this.deleteFilmItem.setVisible(true);
+        this.deleteFilmItem.setOnMenuItemClickListener(this);
 
         return true;
     }
@@ -139,9 +140,22 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
-        Intent intent = new Intent(this, FilmSelectionActivity.class);
-        intent.putExtra("FILE_NAME", video.file_url);
-        startActivity(intent);
+
+        if(menuItem.equals(this.changeFilmItem)) {
+            Intent intent = new Intent(this, FilmCorrectionActivity.class);
+            intent.putExtra("LIBRARY_ID", this.libraryId);
+            intent.putExtra("POSITION", this.lastGridPosition);
+            intent.putExtra("SELECTED_VIDEO", video);
+            startActivity(intent);
+        }
+        else if(menuItem.equals(this.deleteFilmItem)) {
+            VideoModel mod = new VideoModel();
+            mod.deleteEntry(this.video);
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("LIBRARY_ID", libraryId);
+            intent.putExtra("POSITION", this.lastGridPosition);
+            startActivity(intent);
+        }
         return false;
     }
 }

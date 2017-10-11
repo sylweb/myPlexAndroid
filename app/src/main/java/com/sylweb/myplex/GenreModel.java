@@ -39,9 +39,9 @@ public class GenreModel {
         db.executeQuery(query);
     }
 
-    ArrayList<GenreEntry> getGenreForVideo(int tmdbId) {
+    ArrayList<GenreEntry> getGenreForVideo(int videoId) {
         String query = "SELECT * FROM genre INNER JOIN video_genres WHERE video_genres.genre_id = genre.id AND video_genres.video_id = %d";
-        query = String.format(query, tmdbId);
+        query = String.format(query, videoId);
         DBManager db = new DBManager();
         ArrayList results = db.executeQuery(query);
         ArrayList<GenreEntry> genres = new ArrayList();
@@ -53,16 +53,19 @@ public class GenreModel {
         return genres;
     }
 
-    void saveGenreForVideo(GenreEntry entry, int tmdbId) {
+    void saveGenreForVideo(GenreEntry entry, int videoId) {
         String query = "SELECT * FROM video_genres WHERE video_id = %d AND genre_id = %d";
-        query = String.format(query, tmdbId, entry.id);
+        query = String.format(query, videoId, entry.id);
         DBManager db = new DBManager();
         ArrayList results = db.executeQuery(query);
-        if(results == null || results.size() == 0) {
-            query = "INSERT INTO video_genres(video_id,genre_id) VALUES(%d,%d)";
-            query = String.format(query, tmdbId, entry.id);
+        if(results != null && results.size() > 0) {
+            query = "DELETE FROM video_genres WHERE video_id = %s";
+            query = String.format(query, videoId);
             db.executeQuery(query);
         }
+        query = "INSERT INTO video_genres(video_id,genre_id) VALUES(%d,%d)";
+        query = String.format(query, videoId, entry.id);
+        db.executeQuery(query);
     }
 
 }

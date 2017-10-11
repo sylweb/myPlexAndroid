@@ -53,40 +53,42 @@ public class LibraryUtils {
 
                 //Then find all files in the library directory
                 ArrayList<String> files = getAllFiles();
-
-
-                ArrayList<Integer> readIds = new ArrayList<>();
                 ArrayList<String> unidentifiedFiles = new ArrayList<>();
 
                 //For each found file...
                 for (String filename : files) {
 
                     //If we already have this file in DB for this library then skip it
-                    String query = "SELECT id FROM video WHERE library_id = %d AND file_url like'%s'";
+                    String query = "SELECT id FROM video WHERE library_id = %d AND file_url like '%s'";
                     String fileURL = lib.url + "/" + filename;
-                    fileURL = fileURL.replace("'","''");
-                    query = String.format(query, lib.id, fileURL);
+                    query = String.format(query, lib.id, fileURL.replace("'", "''"));
                     DBManager db = new DBManager();
                     ArrayList results = db.executeQuery(query);
                     if (results != null && results.size() > 0) continue;
 
                     //If we don't have this video yet, then try to gather information about it from TheMovieDB
                     VideoEntry newVid = getFilmWithInfo(filename);
-                    if (newVid != null) {
 
-                        //Complete with some local info
-                        newVid.library_id = lib.id;
-                        newVid.file_url = fileURL;
-                        newVid.file_url = newVid.file_url.replace("'","''");
+                    //Complete with some local info
 
-                        //Insert movie in local DB
-                        VideoModel mod = new VideoModel();
-                        mod.saveEntry(newVid);
 
-                        readIds.add(newVid.tmdb_id);
-                    } else {
+                    if (newVid == null) {
+                        newVid = new VideoEntry();
+                        newVid.name = "0000";
+                        newVid.year = "0000";
+                        newVid.overview = "";
+                        newVid.jpg_url = "";
+                        newVid.genres = new ArrayList<GenreEntry>();
+                        newVid.tmdb_id=0;
                         unidentifiedFiles.add(filename);
                     }
+
+                    newVid.id = -1;
+                    newVid.library_id = lib.id;
+                    newVid.file_url = fileURL;
+
+                    VideoModel mod = new VideoModel();
+                    mod.saveEntry(newVid);
                 }
 
                 //Job finished so tell the observer(s)
@@ -371,10 +373,8 @@ public class LibraryUtils {
                         VideoEntry vid = new VideoEntry();
                         vid.tmdb_id = (Integer) entry.get("id");
                         vid.name = (String) entry.get("title");
-                        vid.name = vid.name.replace("'","''");
                         vid.year = ((String) entry.get("release_date")).substring(0, 4);
                         vid.overview = (String) entry.get("overview");
-                        vid.overview = vid.overview.replace("'", "''");
 
                         JSONArray genres = entry.getJSONArray("genre_ids");
                         for(int i=0; i < genres.length(); i++) {
@@ -512,14 +512,27 @@ public class LibraryUtils {
                         VideoEntry vid = new VideoEntry();
                         vid.tmdb_id = (Integer) entry.get("id");
                         vid.name = (String) entry.get("title");
+                        vid.name = vid.name.replace("'","''");
                         vid.year = ((String) entry.get("release_date")).substring(0, 4);
+                        vid.overview = (String) entry.get("overview");
+                        vid.overview = vid.overview.replace("'", "''");
 
                         String poster = (String) entry.get("poster_path");
                         poster = poster.replace("/", "");
+                        vid.tempPosterName = poster;
 
                         Bitmap mybitmap = http.getPicture("https://image.tmdb.org/t/p/w500/" + poster);
-                        mybitmap = getResizedBitmap(mybitmap, 120, 180);
+                        mybitmap = getResizedBitmap(mybitmap, 240, 360);
                         vid.tempImage = mybitmap;
+
+                        JSONArray genres = entry.getJSONArray("genre_ids");
+                        for(int j=0; j < genres.length(); j++) {
+                            int gId = genres.getInt(j);
+
+                            GenreModel mod = new GenreModel();
+                            GenreEntry ge = mod.getGenre(gId);
+                            if(ge != null) vid.genres.add(ge);
+                        }
 
                         films.add(vid);
                     }

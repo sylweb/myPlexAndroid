@@ -53,12 +53,12 @@ public class LibraryContentAdapter extends BaseAdapter {
         ((TextView)(vi.findViewById(R.id.filmName))).setText(data.get(i).name);
 
         try {
-
             Bitmap myBitmap = BitmapFactory.decodeFile(data.get(i).jpg_url);
             ((ImageView)(vi.findViewById(R.id.affiche))).setImageBitmap(myBitmap);
         }
         catch (Exception ex) {
-            Log.e("ERROR", ex.getClass().getName());
+
+            Log.e("ERROR LOADING POSTER", ex.getClass().getName());
         }
 
 

@@ -23,6 +23,7 @@ public class VideoEntry implements Serializable{
     public String jpg_url;
 
     public Bitmap tempImage;
+    public String tempPosterName;
 
     public ArrayList<GenreEntry> genres = new ArrayList<GenreEntry>();
 
@@ -32,9 +33,12 @@ public class VideoEntry implements Serializable{
         this.tmdb_id = Integer.valueOf((String) entry.get("tmdb_id"));
         this.library_id = Integer.valueOf((String) entry.get("library_id"));
         this.name = (String) entry.get("name");
+        this.name = this.name.replace("''","'");
         this.overview = (String) entry.get("overview");
+        this.overview = this.overview.replace("''","'");
         this.year = (String) entry.get("year");
         this.file_url = (String) entry.get("file_url");
+        this.file_url = this.file_url.replace("''","'");
         this.jpg_url = (String) entry.get("jpg_url");
     }
 

@@ -21,7 +21,7 @@ import java.util.zip.Inflater;
 
 public class SearchResultAdapter extends BaseAdapter {
 
-    private ArrayList<VideoEntry> data;
+    public ArrayList<VideoEntry> data;
     private LayoutInflater inflater;
 
     public SearchResultAdapter(Context context, ArrayList<VideoEntry> data) {

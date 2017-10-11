@@ -15,8 +15,8 @@ public class VideoModel {
 
     public void saveEntry(VideoEntry vid) {
 
-        String query = "SELECT * FROM video WHERE tmdb_id = %d AND library_id = %d";
-        query =String.format(query, vid.tmdb_id, vid.library_id) ;
+        String query = "SELECT * FROM video WHERE id = %d AND library_id = %d";
+        query =String.format(query, vid.id, vid.library_id) ;
         DBManager db = new DBManager();
         ArrayList results = db.executeQuery(query);
         if(results ==null || results.size() < 1) {
@@ -25,28 +25,52 @@ public class VideoModel {
     }
 
     public void updateEntry(VideoEntry vid) {
-        String query = "UPDATE video SET library_id=%d, name='%s', overview='%s',year='%s',file_url='%s',jpg_url='%s' WHERE tmdb_id = %d";
-        query = String.format(query, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url, vid.tmdb_id);
+
+        vid.name = vid.name.replace("'","''");
+        vid.overview = vid.overview.replace("'","''");
+        vid.file_url = vid.file_url.replace("'", "''");
+
+        String query = "UPDATE video SET library_id=%d, tmdb_id = %d, name='%s', overview='%s',year='%s',file_url='%s',jpg_url='%s' WHERE id = %s";
+        query = String.format(query, vid.library_id, vid.tmdb_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url, vid.id);
 
         DBManager db = new DBManager();
         db.executeQuery(query);
 
         for(GenreEntry entry : vid.genres) {
             GenreModel mod = new GenreModel();
-            mod.saveGenreForVideo(entry, vid.tmdb_id);
+            mod.saveGenreForVideo(entry, vid.id);
         }
     }
 
     public void insertEntry(VideoEntry vid) {
+
+        vid.name = vid.name.replace("'","''");
+        vid.overview = vid.overview.replace("'","''");
+        vid.file_url = vid.file_url.replace("'", "''");
+
         String query = "INSERT INTO video(tmdb_id,library_id,name,overview,year,file_url,jpg_url,forced) VALUES(%d,%d,'%s','%s','%s','%s','%s',%d)";
         query = String.format(query, vid.tmdb_id, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url,0);
         DBManager db = new DBManager();
         db.executeQuery(query);
 
+        int newId = 0;
+        query = "SELECT max(id) FROM video";
+        ArrayList result = db.executeQuery(query);
+        if(result != null && result.size() > 0) {
+            HashMap record = (HashMap) result.get(0);
+            newId = Integer.valueOf((String)record.get("max(id)"));
+        }
+
         for(GenreEntry entry : vid.genres) {
             GenreModel mod = new GenreModel();
-            mod.saveGenreForVideo(entry, vid.tmdb_id);
+            mod.saveGenreForVideo(entry, newId);
         }
+    }
+
+    public void deleteEntry(VideoEntry vid) {
+        String query = "DELETE FROM video WHERE id = "+vid.id;
+        DBManager db = new DBManager();
+        db.executeQuery(query);
     }
 
     public ArrayList<VideoEntry> getAllForLibrary(Integer libraryId) {

@@ -33,7 +33,7 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".VideoDetailsActivity"></activity>
-        <activity android:name=".FilmSelectionActivity"></activity>
+        <activity android:name=".FilmCorrectionActivity"></activity>
     </application>
 
 </manifest>
