@@ -74,13 +74,12 @@ public class LibraryUtils {
 
                     if (newVid == null) {
                         newVid = new VideoEntry();
-                        newVid.name = "0000";
-                        newVid.year = "0000";
+                        newVid.name = "! "+filename;
+                        newVid.year = "";
                         newVid.overview = "";
                         newVid.jpg_url = "";
                         newVid.genres = new ArrayList<GenreEntry>();
                         newVid.tmdb_id=0;
-                        unidentifiedFiles.add(filename);
                     }
 
                     newVid.id = -1;
@@ -97,7 +96,7 @@ public class LibraryUtils {
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
                 //We also built a list of all files that couldn't be identified so display it in google keep
-                if (unidentifiedFiles.size() > 0) {
+                /*if (unidentifiedFiles.size() > 0) {
                     intent = new Intent(Intent.ACTION_SEND);
                     intent.setType("text/plain");
                     intent.putExtra(Intent.EXTRA_SUBJECT, "Impossible d'identifier ces fichers");
@@ -109,7 +108,7 @@ public class LibraryUtils {
                     intent.putExtra(Intent.EXTRA_TEXT, unidentied);
 
                     this.context.startActivity(Intent.createChooser(intent, "Afficher un texte"));
-                }
+                }*/
             }
             catch(Exception ex) {
                 ex.printStackTrace();

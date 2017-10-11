@@ -53,8 +53,13 @@ public class LibraryContentAdapter extends BaseAdapter {
         ((TextView)(vi.findViewById(R.id.filmName))).setText(data.get(i).name);
 
         try {
-            Bitmap myBitmap = BitmapFactory.decodeFile(data.get(i).jpg_url);
-            ((ImageView)(vi.findViewById(R.id.affiche))).setImageBitmap(myBitmap);
+            if(!data.get(i).jpg_url.equals("")) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(data.get(i).jpg_url);
+                ((ImageView) (vi.findViewById(R.id.affiche))).setImageBitmap(myBitmap);
+            }
+            else {
+                ((ImageView) (vi.findViewById(R.id.affiche))).setImageResource(R.mipmap.icon_dvd);
+            }
         }
         catch (Exception ex) {
 

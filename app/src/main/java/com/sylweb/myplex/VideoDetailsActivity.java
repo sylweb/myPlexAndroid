@@ -65,10 +65,15 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         }
         ((TextView) findViewById(R.id.filmYear)).setText(video.year);
         ((TextView) findViewById(R.id.filmOverview)).setText("Synopsis : \r\n\r\n"+video.overview);
+        this.poster = (ImageView) findViewById(R.id.detailPoster);
         try {
-            Bitmap myBitmap = BitmapFactory.decodeFile(video.jpg_url);
-            this.poster = (ImageView) findViewById(R.id.detailPoster);
-            this.poster.setImageBitmap(myBitmap);
+            if(!video.jpg_url.equals("")) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(video.jpg_url);
+                this.poster.setImageBitmap(myBitmap);
+
+            }else {
+                this.poster.setImageResource(R.mipmap.icon_dvd);
+            }
             this.poster.setOnClickListener(this);
         }
         catch (Exception ex) {
