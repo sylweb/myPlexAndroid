@@ -45,17 +45,9 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         super.onCreate(savedInstanceState);
 
         this.view = inflater.inflate(R.layout.fragment_library_full_view, container, false);
-        this.myGridView = view.findViewById(R.id.library_content);
         this.nbOfVideosTextView = view.findViewById(R.id.nbOfVideos);
-
-        this.myGridView.setAdapter(new LibraryContentAdapter(context, new ArrayList<VideoEntry>()));
+        this.myGridView = view.findViewById(R.id.library_content);
         this.myGridView.setOnItemClickListener(this);
-
-        this.messageReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_SYNC_FINISHED"));
-        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("VIDEO_DATA_READY"));
-
-        updateData(this.libraryId);
 
         return view;
     }
@@ -94,9 +86,9 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onPause() {
+        super.onPause();
         LocalBroadcastManager.getInstance(this.context).unregisterReceiver(messageReceiver);
         this.myGridView.setAdapter(null);
-        super.onPause();
     }
 
     @Override
@@ -105,6 +97,8 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         this.messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_SYNC_FINISHED"));
         LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("VIDEO_DATA_READY"));
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("NEW_VIDEO_AVAILABLE"));
+        updateData(this.libraryId);
     }
 
     public void onStop() {
@@ -131,6 +125,13 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
                 updateData(intent.getIntExtra("LIBRARY_ID", 0));
             }else if(intent.getAction().toString().equals("VIDEO_DATA_READY")) {
                 displayData(intent.getIntExtra("LIBRARY_ID", 0), (ArrayList<VideoEntry>)intent.getSerializableExtra("VIDEO_DATA"));
+            }
+            else if(intent.getAction().toString().equals("NEW_VIDEO_AVAILABLE")) {
+                if(myGridView.getAdapter() != null) {
+                    ((LibraryContentAdapter) myGridView.getAdapter()).data.add((VideoEntry)intent.getSerializableExtra("NEW_VIDEO"));
+                    ((LibraryContentAdapter) myGridView.getAdapter()).notifyDataSetChanged();
+                    nbOfVideosTextView.setText(""+((LibraryContentAdapter) myGridView.getAdapter()).data.size());
+                }
             }
         }
     }

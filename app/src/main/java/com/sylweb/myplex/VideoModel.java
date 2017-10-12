@@ -13,18 +13,18 @@ import java.util.HashMap;
 
 public class VideoModel {
 
-    public void saveEntry(VideoEntry vid) {
+    public VideoEntry saveEntry(VideoEntry vid) {
 
         String query = "SELECT * FROM video WHERE id = %d AND library_id = %d";
         query =String.format(query, vid.id, vid.library_id) ;
         DBManager db = new DBManager();
         ArrayList results = db.executeQuery(query);
         if(results ==null || results.size() < 1) {
-            insertEntry(vid);
-        }else updateEntry(vid);
+            return insertEntry(vid);
+        }else return updateEntry(vid);
     }
 
-    public void updateEntry(VideoEntry vid) {
+    public VideoEntry updateEntry(VideoEntry vid) {
 
         vid.name = vid.name.replace("'","''");
         vid.overview = vid.overview.replace("'","''");
@@ -40,9 +40,11 @@ public class VideoModel {
             GenreModel mod = new GenreModel();
             mod.saveGenreForVideo(entry, vid.id);
         }
+
+        return vid;
     }
 
-    public void insertEntry(VideoEntry vid) {
+    public VideoEntry insertEntry(VideoEntry vid) {
 
         vid.name = vid.name.replace("'","''");
         vid.overview = vid.overview.replace("'","''");
@@ -60,11 +62,14 @@ public class VideoModel {
             HashMap record = (HashMap) result.get(0);
             newId = Integer.valueOf((String)record.get("max(id)"));
         }
+        vid.id = newId;
 
         for(GenreEntry entry : vid.genres) {
             GenreModel mod = new GenreModel();
             mod.saveGenreForVideo(entry, newId);
         }
+
+        return vid;
     }
 
     public void deleteEntry(VideoEntry vid) {

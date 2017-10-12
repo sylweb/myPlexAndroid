@@ -117,6 +117,20 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.poster = null;
+        this.playButton = null;
+        this.video = null;
+        Runtime.getRuntime().gc();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         finish();

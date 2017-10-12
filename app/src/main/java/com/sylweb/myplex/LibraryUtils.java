@@ -53,7 +53,6 @@ public class LibraryUtils {
 
                 //Then find all files in the library directory
                 ArrayList<String> files = getAllFiles();
-                ArrayList<String> unidentifiedFiles = new ArrayList<>();
 
                 //For each found file...
                 for (String filename : files) {
@@ -88,6 +87,10 @@ public class LibraryUtils {
 
                     VideoModel mod = new VideoModel();
                     mod.saveEntry(newVid);
+
+                    Intent intent = new Intent("NEW_VIDEO_AVAILABLE");
+                    intent.putExtra("NEW_VIDEO", newVid);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
 
                 //Job finished so tell the observer(s)
@@ -143,15 +146,15 @@ public class LibraryUtils {
         private ArrayList<String> getAllFiles() {
 
             ArrayList<String> files = new ArrayList<>();
-            File directory = new File(lib.url);
+            /*File directory = new File(lib.url);
             File[] f = directory.listFiles();
             for (int i = 0; i < f.length; i++)
             {
                 if(!f[i].isDirectory()) files.add(f[i].getName());
-            }
+            }*/
 
             //TODO remove after debug
-            /*files.add("3 Amis.avi");
+            files.add("3 Amis.avi");
             files.add("quatre garçons pleins d'avenir.avi");
             files.add("8 mm.avi");
             files.add("8.Mile.avi");
@@ -310,7 +313,7 @@ public class LibraryUtils {
             files.add("F.B.I Fausses Blondes.avi");
             files.add("Fame.avi");
             files.add("Fanny.avi");
-            files.add("Faster.avi");*/
+            files.add("Faster.avi");
 
             return files;
         }
