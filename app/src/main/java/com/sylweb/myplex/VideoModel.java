@@ -50,7 +50,7 @@ public class VideoModel {
         vid.overview = vid.overview.replace("'","''");
         vid.file_url = vid.file_url.replace("'", "''");
 
-        String query = "INSERT INTO video(tmdb_id,library_id,name,overview,year,file_url,jpg_url,forced) VALUES(%d,%d,'%s','%s','%s','%s','%s',%d)";
+        String query = "INSERT INTO video(tmdb_id,library_id,name,overview,year,file_url,jpg_url,viewed) VALUES(%d,%d,'%s','%s','%s','%s','%s',%d)";
         query = String.format(query, vid.tmdb_id, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url,0);
         DBManager db = new DBManager();
         db.executeQuery(query);
@@ -114,6 +114,12 @@ public class VideoModel {
             intent.putExtra("LIBRARY_ID", this.libraryId);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
+    }
+
+    public void tagVideoAsViewed(VideoEntry entry) {
+        String query = "UPDATE video SET viewed = 1 WHERE id =" +entry.id;
+        DBManager db = new DBManager();
+        db.executeQuery(query);
     }
 
 }

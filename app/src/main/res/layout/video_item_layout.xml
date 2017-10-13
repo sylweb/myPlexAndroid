@@ -37,10 +37,20 @@
         android:scrollHorizontally="true"
         android:text=""
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/affiche" />
+
+    <ImageView
+        android:id="@+id/cornerImage"
+        android:layout_width="30px"
+        android:layout_height="30px"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/corner" />
 </android.support.constraint.ConstraintLayout>

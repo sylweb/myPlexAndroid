@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.rdrei.android.dirchooser.DirectoryChooserActivity;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -149,6 +151,9 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
                     intent.putExtra("from_start", false); //Get back where we stopped last time
                     intent.setData(Uri.fromFile(f));
                     startActivity(intent);
+
+                    VideoModel mod = new VideoModel();
+                    mod.tagVideoAsViewed(video);
                 }
                 catch(ActivityNotFoundException ex) {
                     Toast.makeText(this, "Veuillez installer VLC", Toast.LENGTH_LONG).show();

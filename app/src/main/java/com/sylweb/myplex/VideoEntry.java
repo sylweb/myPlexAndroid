@@ -21,6 +21,7 @@ public class VideoEntry implements Serializable{
     public String year;
     public String file_url;
     public String jpg_url;
+    public Integer viewed;
 
     public Bitmap tempImage;
     public String tempPosterName;
@@ -40,6 +41,7 @@ public class VideoEntry implements Serializable{
         this.file_url = (String) entry.get("file_url");
         this.file_url = this.file_url.replace("''","'");
         this.jpg_url = (String) entry.get("jpg_url");
+        this.viewed = Integer.valueOf((String)entry.get("viewed"));
     }
 
     public VideoEntry() {

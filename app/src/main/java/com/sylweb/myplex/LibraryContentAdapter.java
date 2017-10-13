@@ -60,6 +60,12 @@ public class LibraryContentAdapter extends BaseAdapter {
             else {
                 ((ImageView) (vi.findViewById(R.id.affiche))).setImageResource(R.mipmap.icon_dvd);
             }
+
+            ImageView corner = vi.findViewById(R.id.cornerImage);
+            corner.setImageResource(R.mipmap.corner);
+            if(data.get(i).viewed == 0) {
+                corner.setVisibility(View.VISIBLE);
+            }else corner.setVisibility(View.INVISIBLE);
         }
         catch (Exception ex) {
 
