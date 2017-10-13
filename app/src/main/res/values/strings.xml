@@ -8,5 +8,6 @@
     <string name="image_location">/data/data/com.sylweb.myplex/posters/</string>
     <string name="change_film">Corriger la fiche</string>
     <string name="delete_film">Supprimer la fiche</string>
+    <string name="loading_text">Chargement</string>
 
 </resources>
