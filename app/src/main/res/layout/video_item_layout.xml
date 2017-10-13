@@ -37,7 +37,7 @@
         android:scrollHorizontally="true"
         android:text=""
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
