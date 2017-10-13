@@ -74,14 +74,14 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
             }else {
                 this.poster.setImageResource(R.mipmap.icon_dvd);
             }
-            this.poster.setOnClickListener(this);
+
         }
         catch (Exception ex) {
             Log.e("ERROR", ex.getClass().getName());
         }
 
         this.playButton = (ImageView) findViewById(R.id.playButton);
-        this.playButton.setOnClickListener(this);
+
     }
 
     @Override
@@ -90,10 +90,11 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         getMenuInflater().inflate(R.menu.detail_menu, menu);
         this.changeFilmItem = menu.findItem(R.id.change_film);
         this.changeFilmItem.setVisible(true);
-        this.changeFilmItem.setOnMenuItemClickListener(this);
 
         this.deleteFilmItem = menu.findItem(R.id.delete_film);
         this.deleteFilmItem.setVisible(true);
+
+        this.changeFilmItem.setOnMenuItemClickListener(this);
         this.deleteFilmItem.setOnMenuItemClickListener(this);
 
         return true;
@@ -119,21 +120,20 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onResume() {
         super.onResume();
+        this.playButton.setOnClickListener(this);
+        this.poster.setOnClickListener(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.poster = null;
-        this.playButton = null;
-        this.video = null;
-        Runtime.getRuntime().gc();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        finish();
+        this.playButton.setOnClickListener(null);
+        this.poster.setOnClickListener(null);
     }
 
     @Override

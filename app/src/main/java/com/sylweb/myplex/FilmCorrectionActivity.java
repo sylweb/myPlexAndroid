@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -26,10 +27,10 @@ public class FilmCorrectionActivity extends AppCompatActivity implements View.On
     private ListView searchResultView;
     private Button searchButton;
     private MessageReceiver messageReceiver;
-    private boolean searchRunning = false;
     private VideoEntry selectedVideo = new VideoEntry();
     private int libraryId;
     private int position;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,25 +39,26 @@ public class FilmCorrectionActivity extends AppCompatActivity implements View.On
 
         this.searchField = (EditText)findViewById(R.id.searchFilm);
         this.searchResultView = (ListView)findViewById(R.id.filmList);
-        this.searchResultView.setOnItemClickListener(this);
         this.searchButton = (Button)findViewById(R.id.searchButton);
-        this.searchButton.setOnClickListener(this);
+        this.searchButton.setEnabled(true);
+        this.progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        this.progressBar.setVisibility(View.INVISIBLE);
 
         this.selectedVideo = (VideoEntry)getIntent().getExtras().getSerializable("SELECTED_VIDEO");
         this.libraryId = getIntent().getExtras().getInt("LIBRARY_ID");
         this.position = getIntent().getExtras().getInt("POSITION");
-        this.searchField.setText(this.selectedVideo.file_url);
 
-        this.messageReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("SEARCH_FINISHED"));
+        this.searchField.setText(this.selectedVideo.file_url);
     }
 
 
 
     @Override
     public void onClick(View view) {
-        if(!this.searchRunning) {
-            this.searchRunning = true;
+        if(this.searchButton.isEnabled()) {;
+            this.searchButton.setEnabled(false);
+            this.searchResultView.setAdapter(new SearchResultAdapter(this, new ArrayList<VideoEntry>()));
+            this.progressBar.setVisibility(View.VISIBLE);
             LibraryUtils libUtil = new LibraryUtils();
             libUtil.getFilmsByName(this, this.searchField.getText().toString());
         }
@@ -103,11 +105,30 @@ public class FilmCorrectionActivity extends AppCompatActivity implements View.On
         public void onReceive(Context context, Intent intent) {
 
             if(intent.getAction().toString().equals("SEARCH_FINISHED")) {
-                searchRunning = false;
+                searchButton.setEnabled(true);
+                progressBar.setVisibility(View.INVISIBLE);
                 searchResultView.setAdapter(new SearchResultAdapter(context, (ArrayList<VideoEntry>)intent.getExtras().getSerializable("DATA")));
             }
 
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(this.messageReceiver);
+        this.searchResultView.setAdapter(null);
+        this.searchResultView.setOnItemClickListener(null);
+        this.searchButton.setOnClickListener(null);
+    }
+
+    public void onResume() {
+        super.onResume();
+        this.messageReceiver = new MessageReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("SEARCH_FINISHED"));
+        this.searchResultView.setOnItemClickListener(this);
+        this.searchButton.setOnClickListener(this);
+
     }
 
     @Override
