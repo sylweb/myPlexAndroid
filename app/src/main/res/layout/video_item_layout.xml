@@ -2,26 +2,26 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="200px"
+    android:layout_width="186px"
     android:layout_height="wrap_content"
     android:background="@color/myLightBlack"
     tools:ignore="PxUsage">
 
     <ImageView
         android:id="@+id/affiche"
-        android:layout_width="200px"
+        android:layout_width="186px"
         android:layout_height="280px"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="4dp"
+        android:contentDescription="@string/image_location"
         android:scaleType="fitCenter"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/icon_dvd"
-        android:contentDescription="@string/image_location"
-        tools:ignore="PxUsage"/>
+        tools:ignore="PxUsage" />
 
     <TextView
         android:id="@+id/filmName"

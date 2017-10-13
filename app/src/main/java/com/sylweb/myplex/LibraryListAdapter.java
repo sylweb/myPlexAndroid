@@ -20,12 +20,10 @@ public class LibraryListAdapter extends BaseAdapter {
 
 
     public ArrayList<LibraryEntry> data;
-    private Context context;
     private LayoutInflater inflater = null;
 
     public LibraryListAdapter(Context context, ArrayList<LibraryEntry> data) {
         this.data = data;
-        this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -49,11 +47,11 @@ public class LibraryListAdapter extends BaseAdapter {
         View vi = view;
         if (vi == null) vi = inflater.inflate(R.layout.library_item_layout, null);
 
-        TextView libName = (TextView)vi.findViewById(R.id.itemName);
+        TextView libName = vi.findViewById(R.id.itemName);
         libName.setText(data.get(i).name);
-        libName.setTextColor(context.getResources().getColor(R.color.white));
+        libName.setTextColor(vi.getResources().getColor(R.color.white));
 
-        ImageView libIcon = (ImageView) vi.findViewById(R.id.libraryIcon);
+        ImageView libIcon = vi.findViewById(R.id.libraryIcon);
         libIcon.setColorFilter(Color.parseColor("#FFFFFFFF"), PorterDuff.Mode.SRC_ATOP);
 
         return vi;

@@ -5,9 +5,15 @@
     <string name="navigation_drawer_close">Fermer la barre de navigation</string>
     <string name="action_settings">Configuration</string>
 
+
     <string name="image_location">/data/data/com.sylweb.myplex/posters/</string>
     <string name="change_film">Corriger la fiche</string>
     <string name="delete_film">Supprimer la fiche</string>
-    <string name="loading_text">Chargement</string>
+    <string name="loading_text">Chargement...</string>
+
+    <string name="video_details_activity_title">Détails du film</string>
+    <string name="gender_text">Genre(s)</string>
+    <string name="year_text">Année de sortie</string>
+    <string name="overview_text">Résumé</string>
 
 </resources>

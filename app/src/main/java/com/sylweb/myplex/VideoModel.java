@@ -30,8 +30,8 @@ public class VideoModel {
         vid.overview = vid.overview.replace("'","''");
         vid.file_url = vid.file_url.replace("'", "''");
 
-        String query = "UPDATE video SET library_id=%d, tmdb_id = %d, name='%s', overview='%s',year='%s',file_url='%s',jpg_url='%s' WHERE id = %s";
-        query = String.format(query, vid.library_id, vid.tmdb_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url, vid.id);
+        String query = "UPDATE video SET library_id=%d, tmdb_id = %d, name='%s', overview='%s',year='%s',file_url='%s',big_jpg_url='%s',small_jpg_url='%s' WHERE id = %s";
+        query = String.format(query, vid.library_id, vid.tmdb_id, vid.name, vid.overview, vid.year, vid.file_url,vid.big_jpg_url,vid.small_jpg_url, vid.id);
 
         DBManager db = new DBManager();
         db.executeQuery(query);
@@ -50,8 +50,8 @@ public class VideoModel {
         vid.overview = vid.overview.replace("'","''");
         vid.file_url = vid.file_url.replace("'", "''");
 
-        String query = "INSERT INTO video(tmdb_id,library_id,name,overview,year,file_url,jpg_url,viewed) VALUES(%d,%d,'%s','%s','%s','%s','%s',%d)";
-        query = String.format(query, vid.tmdb_id, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.jpg_url,0);
+        String query = "INSERT INTO video(tmdb_id,library_id,name,overview,year,file_url,big_jpg_url,small_jpg_url,viewed) VALUES(%d,%d,'%s','%s','%s','%s','%s','%s',%d)";
+        query = String.format(query, vid.tmdb_id, vid.library_id, vid.name, vid.overview, vid.year, vid.file_url,vid.big_jpg_url,vid.small_jpg_url,0);
         DBManager db = new DBManager();
         db.executeQuery(query);
 

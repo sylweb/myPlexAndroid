@@ -28,7 +28,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/colorAccent"
-        android:columnWidth="200px"
+        android:columnWidth="186px"
         android:numColumns="auto_fit"
         android:paddingTop="8dp"
         android:stretchMode="spacingWidthUniform"

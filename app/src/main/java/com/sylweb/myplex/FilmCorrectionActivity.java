@@ -76,17 +76,22 @@ public class FilmCorrectionActivity extends AppCompatActivity implements View.On
 
         try {
 
-            File myjpg = new File(getString(R.string.image_location), newVid.tempPosterName);
+            File myjpg = new File(getString(R.string.image_location), "small-"+newVid.tempPosterName);
             File directory = new File(getString(R.string.image_location) + "/");
             if (!directory.exists()) directory.mkdir();
             if (!myjpg.exists()) myjpg.createNewFile();
             OutputStream outputstream = new FileOutputStream(myjpg);
-            newVid.tempImage.compress(Bitmap.CompressFormat.JPEG, 80, outputstream);
+            newVid.tempSmallImage.compress(Bitmap.CompressFormat.JPEG, 70, outputstream);
             outputstream.close();
 
-            newVid.jpg_url = getString(R.string.image_location) + newVid.tempPosterName;
+            myjpg = new File(getString(R.string.image_location), "big-"+newVid.tempPosterName);
+            if (!myjpg.exists()) myjpg.createNewFile();
+            outputstream = new FileOutputStream(myjpg);
+            newVid.tempBigImage.compress(Bitmap.CompressFormat.JPEG, 90, outputstream);
+            outputstream.close();
 
-            this.selectedVideo.jpg_url = newVid.jpg_url;
+            this.selectedVideo.small_jpg_url = getString(R.string.image_location) + "small-"+newVid.tempPosterName;
+            this.selectedVideo.big_jpg_url = getString(R.string.image_location) + "big-"+newVid.tempPosterName;
             VideoModel mod = new VideoModel();
             mod.saveEntry(this.selectedVideo);
         }

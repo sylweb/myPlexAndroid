@@ -20,10 +20,13 @@ public class VideoEntry implements Serializable{
     public String overview;
     public String year;
     public String file_url;
-    public String jpg_url;
+    public String small_jpg_url;
+    public String big_jpg_url;
+
     public Integer viewed;
 
-    public Bitmap tempImage;
+    public Bitmap tempSmallImage;
+    public Bitmap tempBigImage;
     public String tempPosterName;
 
     public ArrayList<GenreEntry> genres = new ArrayList<GenreEntry>();
@@ -40,7 +43,8 @@ public class VideoEntry implements Serializable{
         this.year = (String) entry.get("year");
         this.file_url = (String) entry.get("file_url");
         this.file_url = this.file_url.replace("''","'");
-        this.jpg_url = (String) entry.get("jpg_url");
+        this.big_jpg_url = (String) entry.get("big_jpg_url");
+        this.small_jpg_url = (String) entry.get("small_jpg_url");
         this.viewed = Integer.valueOf((String)entry.get("viewed"));
     }
 

@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by sylvain on 27/09/2017.
@@ -58,12 +59,17 @@ public class LibraryUtils {
                 for (String filename : files) {
 
                     //If we already have this file in DB for this library then skip it
-                    String query = "SELECT id FROM video WHERE library_id = %d AND file_url like '%s'";
+                    int idToUse = -1;
+                    String query = "SELECT * FROM video WHERE library_id = %d AND file_url like '%s'";
                     String fileURL = lib.url + "/" + filename;
                     query = String.format(query, lib.id, fileURL.replace("'", "''"));
                     DBManager db = new DBManager();
                     ArrayList results = db.executeQuery(query);
-                    if (results != null && results.size() > 0) continue;
+                    if (results != null && results.size() > 0) {
+                        VideoEntry vi = new VideoEntry(results.get(0));
+                        if(vi.small_jpg_url.isEmpty() && vi.big_jpg_url.isEmpty()) idToUse = vi.id;
+                        else continue;
+                    }
 
                     //If we don't have this video yet, then try to gather information about it from TheMovieDB
                     VideoEntry newVid = getFilmWithInfo(filename);
@@ -76,12 +82,13 @@ public class LibraryUtils {
                         newVid.name = "! "+filename;
                         newVid.year = "";
                         newVid.overview = "";
-                        newVid.jpg_url = "";
+                        newVid.small_jpg_url = "";
+                        newVid.big_jpg_url = "";
                         newVid.genres = new ArrayList<GenreEntry>();
                         newVid.tmdb_id=0;
                     }
 
-                    newVid.id = -1;
+                    newVid.id = idToUse;
                     newVid.library_id = lib.id;
                     newVid.file_url = fileURL;
 
@@ -115,6 +122,10 @@ public class LibraryUtils {
             }
             catch(Exception ex) {
                 ex.printStackTrace();
+                //Job finished so tell the observer(s)
+                Intent intent = new Intent("LIBRARY_SYNC_FINISHED");
+                intent.putExtra("LIBRARY_ID", lib.id);
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
         }
 
@@ -391,18 +402,23 @@ public class LibraryUtils {
                         poster = poster.replace("/", "");
 
                         Bitmap mybitmap = http.getPicture("https://image.tmdb.org/t/p/w500/" + poster);
-
-                        File myjpg = new File(context.getString(R.string.image_location), poster);
-
                         File directory = new File(context.getString(R.string.image_location) + "/");
                         if (!directory.exists()) directory.mkdir();
-                        if (!myjpg.exists()) myjpg.createNewFile();
-                        OutputStream outputstream = new FileOutputStream(myjpg);
-                        mybitmap = getResizedBitmap(mybitmap, 240,360);
-                        mybitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputstream);
+                        File myjpgBig = new File(context.getString(R.string.image_location), "big-"+poster);
+                        if (!myjpgBig.exists()) myjpgBig.createNewFile();
+                        OutputStream outputstream = new FileOutputStream(myjpgBig);
+                        mybitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputstream);
                         outputstream.close();
 
-                        vid.jpg_url = context.getString(R.string.image_location) + poster;
+                        File myjpgSmall = new File(context.getString(R.string.image_location), "small-"+poster);
+                        if (!myjpgSmall.exists()) myjpgSmall.createNewFile();
+                        outputstream = new FileOutputStream(myjpgSmall);
+                        mybitmap = getResizedBitmap(mybitmap, 186,280);
+                        mybitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputstream);
+                        outputstream.close();
+
+                        vid.small_jpg_url = context.getString(R.string.image_location) + "small-"+poster;
+                        vid.big_jpg_url = context.getString(R.string.image_location) + "big-"+poster;
 
                         return vid;
                     }
@@ -524,8 +540,9 @@ public class LibraryUtils {
                         vid.tempPosterName = poster;
 
                         Bitmap mybitmap = http.getPicture("https://image.tmdb.org/t/p/w500/" + poster);
-                        mybitmap = getResizedBitmap(mybitmap, 240, 360);
-                        vid.tempImage = mybitmap;
+                        vid.tempBigImage = mybitmap;
+                        mybitmap = getResizedBitmap(mybitmap, 186, 280);
+                        vid.tempSmallImage = mybitmap;
 
                         JSONArray genres = entry.getJSONArray("genre_ids");
                         for(int j=0; j < genres.length(); j++) {

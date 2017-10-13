@@ -53,7 +53,7 @@ public class SearchResultAdapter extends BaseAdapter {
         ((TextView)vi.findViewById(R.id.yearField)).setText(data.get(i).year);
         try {
             ImageView poster = vi.findViewById(R.id.posterField);
-            poster.setImageBitmap(data.get(i).tempImage);
+            poster.setImageBitmap(data.get(i).tempSmallImage);
         }
         catch (Exception ex) {
             Log.e("ERROR", ex.getClass().getName());

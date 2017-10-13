@@ -36,7 +36,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_video_details);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("Détails du film");
+        setTitle(getString(R.string.video_details_activity_title));
 
         Intent intent = getIntent();
         this.video= (VideoEntry) intent.getExtras().getSerializable("SELECTED_VIDEO");
@@ -54,23 +54,23 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
 
         if(genres != null && genres.size() > 0) {
 
-            String genreTxt = "Genre(s) : ";
+            String genreTxt = getString(R.string.gender_text)+" : ";
             for(GenreEntry genre : genres) {
                 genreTxt+=genre.name;
-                genreTxt += ",";
+                genreTxt += ", ";
             }
             genreTxt = genreTxt.substring(0,genreTxt.lastIndexOf(","));
             ((TextView) findViewById(R.id.filmGenres)).setText(genreTxt);
         }
         else {
-            ((TextView) findViewById(R.id.filmGenres)).setText("Genre : inconnu");
+            ((TextView) findViewById(R.id.filmGenres)).setText(getString(R.string.gender_text)+" : inconnu");
         }
-        ((TextView) findViewById(R.id.filmYear)).setText(video.year);
-        ((TextView) findViewById(R.id.filmOverview)).setText("Synopsis : \r\n\r\n"+video.overview);
+        ((TextView) findViewById(R.id.filmYear)).setText(getString(R.string.year_text)+ " : "+ video.year);
+        ((TextView) findViewById(R.id.filmOverview)).setText(getString(R.string.overview_text)+" : \r\n\r\n"+video.overview);
         this.poster = (ImageView) findViewById(R.id.detailPoster);
         try {
-            if(!video.jpg_url.equals("")) {
-                Bitmap myBitmap = BitmapFactory.decodeFile(video.jpg_url);
+            if(!video.big_jpg_url.equals("")) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(video.big_jpg_url);
                 this.poster.setImageBitmap(myBitmap);
 
             }else {
