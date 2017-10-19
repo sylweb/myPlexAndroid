@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -136,6 +137,21 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         super.onPause();
         this.playButton.setOnClickListener(null);
         this.poster.setOnClickListener(null);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        Log.d("KEY EVENT","Key code = "+keyCode);
+
+        switch (keyCode) {
+            case 66 : //ENTER
+                this.onClick(this.playButton);
+                break;
+            case 67 : //BACK
+                this.onBackPressed();
+                break;
+        }
+        return true;
     }
 
     @Override

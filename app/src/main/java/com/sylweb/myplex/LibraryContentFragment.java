@@ -49,7 +49,6 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         this.myGridView = view.findViewById(R.id.library_content);
         this.myGridView.setOnItemClickListener(this);
         this.myGridView.setOnItemSelectedListener(this);
-
         return view;
     }
 

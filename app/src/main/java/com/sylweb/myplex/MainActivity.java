@@ -94,23 +94,6 @@ public class MainActivity extends AppCompatActivity
         ft.commit();
     }
 
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        Log.d("KEY EVENT","Key code = "+keyCode);
-
-        switch (keyCode) {
-            case 22 : //Right
-                //NEXT
-                break;
-            case 21 : //Left
-                //PREVIOUS
-                break;
-        }
-
-        return false;
-    }
-
-
     private void loadLibraryList() {
 
         LibraryModel mod = new LibraryModel();
@@ -199,6 +182,7 @@ public class MainActivity extends AppCompatActivity
         this.messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_SYNC_FINISHED"));
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_LIST_MODIFIED"));
+
     }
 
     //Message receiver

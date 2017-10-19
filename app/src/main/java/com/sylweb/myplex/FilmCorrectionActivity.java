@@ -48,7 +48,10 @@ public class FilmCorrectionActivity extends AppCompatActivity implements View.On
         this.libraryId = getIntent().getExtras().getInt("LIBRARY_ID");
         this.position = getIntent().getExtras().getInt("POSITION");
 
-        this.searchField.setText(this.selectedVideo.file_url);
+        LibraryModel mod = new LibraryModel();
+        LibraryEntry lib = mod.getFromId(this.libraryId);
+        String video_name = this.selectedVideo.file_url.replace(lib.url+"/", "");
+        this.searchField.setText(video_name);
     }
 
 

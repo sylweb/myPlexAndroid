@@ -28,7 +28,7 @@ public class LibraryContentAdapter extends BaseAdapter {
 
     public LibraryContentAdapter(Context context, ArrayList<VideoEntry> data) {
         this.data = data;
-        this.selectedPosition = 0;
+        this.selectedPosition = -1;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -69,7 +69,7 @@ public class LibraryContentAdapter extends BaseAdapter {
             }
 
             if(selectedPosition == i) {
-                vi.setBackgroundColor(vi.getResources().getColor(R.color.myLightGray));
+                vi.setBackgroundColor(vi.getResources().getColor(R.color.myDarkOrange));
             }else {
                 vi.setBackgroundColor(vi.getResources().getColor(R.color.myLightBlack));
             }
