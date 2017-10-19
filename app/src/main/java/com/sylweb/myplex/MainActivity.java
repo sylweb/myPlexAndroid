@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -91,6 +93,23 @@ public class MainActivity extends AppCompatActivity
         ft.replace(R.id.content_frame, frag);
         ft.commit();
     }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        Log.d("KEY EVENT","Key code = "+keyCode);
+
+        switch (keyCode) {
+            case 22 : //Right
+                //NEXT
+                break;
+            case 21 : //Left
+                //PREVIOUS
+                break;
+        }
+
+        return false;
+    }
+
 
     private void loadLibraryList() {
 

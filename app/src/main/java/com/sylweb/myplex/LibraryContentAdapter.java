@@ -22,11 +22,18 @@ public class LibraryContentAdapter extends BaseAdapter {
 
     public ArrayList<VideoEntry> data;
 
+    private int selectedPosition;
+
     private LayoutInflater inflater = null;
 
     public LibraryContentAdapter(Context context, ArrayList<VideoEntry> data) {
         this.data = data;
+        this.selectedPosition = 0;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public void setSelected(int position) {
+        this.selectedPosition = position;
     }
 
     @Override
@@ -59,6 +66,12 @@ public class LibraryContentAdapter extends BaseAdapter {
             }
             else {
                 ((ImageView) (vi.findViewById(R.id.affiche))).setImageResource(R.mipmap.icon_dvd);
+            }
+
+            if(selectedPosition == i) {
+                vi.setBackgroundColor(vi.getResources().getColor(R.color.myLightGray));
+            }else {
+                vi.setBackgroundColor(vi.getResources().getColor(R.color.myLightBlack));
             }
 
             ImageView corner = vi.findViewById(R.id.cornerImage);

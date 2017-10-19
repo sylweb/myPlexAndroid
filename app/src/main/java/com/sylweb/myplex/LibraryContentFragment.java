@@ -23,7 +23,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 
-public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     public Context context;
     public Integer libraryId;
@@ -48,6 +48,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         this.nbOfVideosTextView = view.findViewById(R.id.nbOfVideos);
         this.myGridView = view.findViewById(R.id.library_content);
         this.myGridView.setOnItemClickListener(this);
+        this.myGridView.setOnItemSelectedListener(this);
 
         return view;
     }
@@ -113,6 +114,17 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         intent.putExtra("LIBRARY_ID", this.libraryId);
         intent.putExtra("POSITION", video.id);
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        ((LibraryContentAdapter)this.myGridView.getAdapter()).setSelected(i);
+        ((LibraryContentAdapter)this.myGridView.getAdapter()).notifyDataSetChanged();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 
     //Message receiver
