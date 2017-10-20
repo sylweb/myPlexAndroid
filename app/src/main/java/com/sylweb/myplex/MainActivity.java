@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity
         frag.libraryId = libId;
         frag.context = this.getApplicationContext();
         frag.gridPosition = position;
+
         ft.replace(R.id.content_frame, frag);
         ft.commit();
     }

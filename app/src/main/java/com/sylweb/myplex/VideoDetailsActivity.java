@@ -105,15 +105,16 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onSupportNavigateUp() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("LIBRARY_ID", libraryId);
-        intent.putExtra("POSITION", this.lastGridPosition);
-        startActivity(intent);
+        backToPreviousScreen();
         return true;
     }
 
     @Override
     public void onBackPressed() {
+        backToPreviousScreen();
+    }
+
+    private void backToPreviousScreen() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("LIBRARY_ID", libraryId);
         intent.putExtra("POSITION", this.lastGridPosition);

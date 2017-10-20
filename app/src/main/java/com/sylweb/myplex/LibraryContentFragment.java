@@ -67,15 +67,20 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
             }
             this.myGridView.setAdapter(new LibraryContentAdapter(context, data));
 
+
             if(this.gridPosition != 0) {
                 for(int i=0; i < data.size(); i++) {
                     VideoEntry video = data.get(i);
                     if(video.id == this.gridPosition) {
                         this.myGridView.setSelection(i);
+                        ((LibraryContentAdapter)this.myGridView.getAdapter()).setSelected(this.myGridView.getFirstVisiblePosition());
+                        ((LibraryContentAdapter)this.myGridView.getAdapter()).notifyDataSetChanged();
                         break;
                     }
                 }
             }
+
+
         }
     }
 
