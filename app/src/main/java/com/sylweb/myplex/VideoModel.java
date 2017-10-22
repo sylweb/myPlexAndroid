@@ -122,4 +122,10 @@ public class VideoModel {
         db.executeQuery(query);
     }
 
+    public void tagVideoAsNotViewed(VideoEntry entry) {
+        String query = "UPDATE video SET viewed = 0 WHERE id =" +entry.id;
+        DBManager db = new DBManager();
+        db.executeQuery(query);
+    }
+
 }

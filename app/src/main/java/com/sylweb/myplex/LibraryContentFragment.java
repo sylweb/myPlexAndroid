@@ -17,6 +17,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -139,6 +140,13 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
             if(intent.getAction().toString().equals("LIBRARY_SYNC_FINISHED")) {
                 updateData(intent.getIntExtra("LIBRARY_ID", 0));
+                if(intent.getExtras().getString("ERROR") != null) {
+                    Toast.makeText(context,intent.getExtras().getString("ERROR"), Toast.LENGTH_LONG).show();
+                }
+                if(intent.getExtras().getString("ERROR2") != null) {
+                    Toast.makeText(context,intent.getExtras().getString("ERROR2"), Toast.LENGTH_LONG).show();
+                }
+
             }else if(intent.getAction().toString().equals("VIDEO_DATA_READY")) {
                 displayData(intent.getIntExtra("LIBRARY_ID", 0), (ArrayList<VideoEntry>)intent.getSerializableExtra("VIDEO_DATA"));
             }

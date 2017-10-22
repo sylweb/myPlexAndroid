@@ -48,6 +48,7 @@ public class LibraryUtils {
 
         @Override
         public void run() {
+            String lastFile = "";
             try {
                 //First update genre database from the movie DB
                 updateGenreDB();
@@ -55,8 +56,12 @@ public class LibraryUtils {
                 //Then find all files in the library directory
                 ArrayList<String> files = getAllFiles();
 
+
+
                 //For each found file...
                 for (String filename : files) {
+
+                    lastFile = filename;
 
                     //If we already have this file in DB for this library then skip it
                     int idToUse = -1;
@@ -125,6 +130,7 @@ public class LibraryUtils {
                 //Job finished so tell the observer(s)
                 Intent intent = new Intent("LIBRARY_SYNC_FINISHED");
                 intent.putExtra("LIBRARY_ID", lib.id);
+                intent.putExtra("ERROR", lastFile);
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
         }

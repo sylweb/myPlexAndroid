@@ -30,6 +30,8 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     private int lastGridPosition;
     private MenuItem changeFilmItem;
     private MenuItem deleteFilmItem;
+    private MenuItem markAsSeenItem;
+    private MenuItem markAsUnseenItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +99,16 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         this.deleteFilmItem = menu.findItem(R.id.delete_film);
         this.deleteFilmItem.setVisible(true);
 
+        this.markAsSeenItem = menu.findItem(R.id.mark_as_seen);
+        this.markAsSeenItem.setVisible(true);
+
+        this.markAsUnseenItem = menu.findItem(R.id.mark_as_unseen);
+        this.markAsUnseenItem.setVisible(true);
+
         this.changeFilmItem.setOnMenuItemClickListener(this);
         this.deleteFilmItem.setOnMenuItemClickListener(this);
+        this.markAsSeenItem.setOnMenuItemClickListener(this);
+        this.markAsUnseenItem.setOnMenuItemClickListener(this);
 
         return true;
     }
@@ -163,17 +173,21 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
             if(video.file_url != null && !video.file_url.equals("")) {
                 try {
                     File f = new File(video.file_url);
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    /*Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setPackage("org.videolan.vlc");
                     intent.putExtra("from_start", false); //Get back where we stopped last time
                     intent.setData(Uri.fromFile(f));
+                    startActivity(intent);*/
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromFile(f));
+                    intent.setDataAndType(Uri.fromFile(f), "video/*");
                     startActivity(intent);
 
                     VideoModel mod = new VideoModel();
                     mod.tagVideoAsViewed(video);
                 }
                 catch(ActivityNotFoundException ex) {
-                    Toast.makeText(this, "Veuillez installer VLC", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -196,6 +210,14 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
             intent.putExtra("LIBRARY_ID", libraryId);
             intent.putExtra("POSITION", this.lastGridPosition);
             startActivity(intent);
+        }
+        else if(menuItem.equals(this.markAsSeenItem)) {
+            VideoModel mod = new VideoModel();
+            mod.tagVideoAsViewed(video);
+        }
+        else if(menuItem.equals(this.markAsUnseenItem)) {
+            VideoModel mod = new VideoModel();
+            mod.tagVideoAsNotViewed(video);
         }
         return false;
     }
