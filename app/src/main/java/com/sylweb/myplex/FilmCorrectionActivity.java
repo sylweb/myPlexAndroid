@@ -51,6 +51,30 @@ public class FilmCorrectionActivity extends AppCompatActivity implements View.On
         LibraryModel mod = new LibraryModel();
         LibraryEntry lib = mod.getFromId(this.libraryId);
         String video_name = this.selectedVideo.file_url.replace(lib.url+"/", "");
+
+        if(video_name.lastIndexOf(".") > 0) video_name = video_name.substring(0, video_name.lastIndexOf("."));
+        video_name = video_name.replace("[","");
+        video_name = video_name.replace("]","");
+        video_name = video_name.replace("{","");
+        video_name = video_name.replace("}","");
+        video_name = video_name.replace("."," ");
+        video_name = video_name.replace("_"," ");
+        video_name = video_name.replace("."," ");
+        video_name = video_name.replace(","," ");
+        video_name = video_name.replace("é","e");
+        video_name = video_name.replace("è","e");
+        video_name = video_name.replace("ê","e");
+        video_name = video_name.replace("à","a");
+        video_name = video_name.replace("ç","c");
+        video_name = video_name.replace("ù","u");
+        video_name = video_name.replace("ô","o");
+        video_name = video_name.replace("ë","e");
+        video_name = video_name.replace("î","i");
+        video_name = video_name.replace("ï","i");
+
+
+        video_name = video_name.trim();
+
         this.searchField.setText(video_name);
     }
 
@@ -103,6 +127,8 @@ public class FilmCorrectionActivity extends AppCompatActivity implements View.On
         }
 
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("LIBRARY_ID", this.libraryId);
+        intent.putExtra("POSITION", 1);
         startActivity(intent);
     }
 
