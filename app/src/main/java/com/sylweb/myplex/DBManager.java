@@ -34,7 +34,7 @@ public class DBManager {
         return test;
     }
 
-    /** This method open database for operations **/
+    /** This method open database for operations TEST **/
     private void openDB() {
         String mPath = DB_PATH + DB_NAME;
         myDB = SQLiteDatabase.openDatabase(mPath, null,

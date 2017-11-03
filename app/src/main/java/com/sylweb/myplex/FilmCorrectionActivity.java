@@ -72,7 +72,7 @@ public class FilmCorrectionActivity extends AppCompatActivity implements View.On
         video_name = video_name.replace("î","i");
         video_name = video_name.replace("ï","i");
 
-        
+
 
 
         video_name = video_name.trim();
