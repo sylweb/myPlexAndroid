@@ -27,6 +27,7 @@ public class DBManager {
     private String DB_NAME = "local_video_db.sqlite";
     private SQLiteDatabase myDB;
     public boolean dbOpened;
+    
 
     public boolean initDB(Context context)
     {
