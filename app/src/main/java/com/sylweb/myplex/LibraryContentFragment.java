@@ -1,27 +1,23 @@
 package com.sylweb.myplex;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
+
+
 
 
 public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
@@ -35,7 +31,11 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     protected MessageReceiver messageReceiver;
 
+    private ExplosionField mExplosion;
+
     private View view;
+
+    private VideoEntry lastSelectedItem = null;
 
     public LibraryContentFragment() {
         // Required empty public constructor
@@ -50,6 +50,8 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         this.myGridView = view.findViewById(R.id.library_content);
         this.myGridView.setOnItemClickListener(this);
         this.myGridView.setOnItemSelectedListener(this);
+
+        this.mExplosion = ExplosionField.attach2Window(getActivity());
         return view;
     }
 
@@ -104,6 +106,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("LIBRARY_SYNC_FINISHED"));
         LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("VIDEO_DATA_READY"));
         LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("NEW_VIDEO_AVAILABLE"));
+        LocalBroadcastManager.getInstance(this.context).registerReceiver(messageReceiver, new IntentFilter("EXPLOSION_FINISHED"));
         updateData(this.libraryId);
     }
 
@@ -113,12 +116,16 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        VideoEntry video = (VideoEntry) adapterView.getItemAtPosition(i);
+
+        this.lastSelectedItem = (VideoEntry) adapterView.getItemAtPosition(i);
+        this.mExplosion.explode(view);
+
+        /*VideoEntry video = (VideoEntry) adapterView.getItemAtPosition(i);
         Intent intent = new Intent(this.context, VideoDetailsActivity.class);
         intent.putExtra("SELECTED_VIDEO", video);
         intent.putExtra("LIBRARY_ID", this.libraryId);
         intent.putExtra("POSITION", video.id);
-        startActivity(intent);
+        startActivity(intent);*/
     }
 
     @Override
@@ -156,6 +163,12 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
                     ((LibraryContentAdapter) myGridView.getAdapter()).notifyDataSetChanged();
                     nbOfVideosTextView.setText(""+((LibraryContentAdapter) myGridView.getAdapter()).data.size());
                 }
+            }else if (intent.getAction().toString().equals("EXPLOSION_FINISHED")) {
+                Intent myIntent = new Intent(context, VideoDetailsActivity.class);
+                myIntent.putExtra("SELECTED_VIDEO", lastSelectedItem);
+                myIntent.putExtra("LIBRARY_ID", libraryId);
+                myIntent.putExtra("POSITION", lastSelectedItem.id);
+                startActivity(myIntent);
             }
         }
     }
