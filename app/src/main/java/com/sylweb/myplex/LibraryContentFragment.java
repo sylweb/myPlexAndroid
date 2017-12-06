@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,14 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
-
-
-public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener, TimePickerDialog.OnTimeSetListener{
 
     public Context context;
     public Integer libraryId;
@@ -117,15 +120,9 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
+        //Nice explosion effect -> then we will receive a message indicating the animation is finished (EXPLOSION_FINISHED)
         this.lastSelectedItem = (VideoEntry) adapterView.getItemAtPosition(i);
         this.mExplosion.explode(view);
-
-        /*VideoEntry video = (VideoEntry) adapterView.getItemAtPosition(i);
-        Intent intent = new Intent(this.context, VideoDetailsActivity.class);
-        intent.putExtra("SELECTED_VIDEO", video);
-        intent.putExtra("LIBRARY_ID", this.libraryId);
-        intent.putExtra("POSITION", video.id);
-        startActivity(intent);*/
     }
 
     @Override
@@ -137,6 +134,11 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    @Override
+    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+        Log.d("TEST","COUCOU");
     }
 
     //Message receiver
