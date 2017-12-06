@@ -15,15 +15,10 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
-
 import java.util.ArrayList;
-import java.util.Calendar;
 
 
-public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener, TimePickerDialog.OnTimeSetListener{
+public class LibraryContentFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     public Context context;
     public Integer libraryId;
@@ -134,11 +129,6 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
-    }
-
-    @Override
-    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        Log.d("TEST","COUCOU");
     }
 
     //Message receiver
