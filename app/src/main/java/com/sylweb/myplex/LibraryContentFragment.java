@@ -29,7 +29,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     protected MessageReceiver messageReceiver;
 
-    private ExplosionField mExplosion;
+
 
     private View view;
 
@@ -49,7 +49,7 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
         this.myGridView.setOnItemClickListener(this);
         this.myGridView.setOnItemSelectedListener(this);
 
-        this.mExplosion = ExplosionField.attach2Window(getActivity());
+
         return view;
     }
 
@@ -114,10 +114,12 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-        //Nice explosion effect -> then we will receive a message indicating the animation is finished (EXPLOSION_FINISHED)
         this.lastSelectedItem = (VideoEntry) adapterView.getItemAtPosition(i);
-        this.mExplosion.explode(view);
+        Intent myIntent = new Intent(context, VideoDetailsActivity.class);
+        myIntent.putExtra("SELECTED_VIDEO", lastSelectedItem);
+        myIntent.putExtra("LIBRARY_ID", libraryId);
+        myIntent.putExtra("POSITION", lastSelectedItem.id);
+        startActivity(myIntent);
     }
 
     @Override
@@ -155,12 +157,6 @@ public class LibraryContentFragment extends Fragment implements AdapterView.OnIt
                     ((LibraryContentAdapter) myGridView.getAdapter()).notifyDataSetChanged();
                     nbOfVideosTextView.setText(""+((LibraryContentAdapter) myGridView.getAdapter()).data.size());
                 }
-            }else if (intent.getAction().toString().equals("EXPLOSION_FINISHED")) {
-                Intent myIntent = new Intent(context, VideoDetailsActivity.class);
-                myIntent.putExtra("SELECTED_VIDEO", lastSelectedItem);
-                myIntent.putExtra("LIBRARY_ID", libraryId);
-                myIntent.putExtra("POSITION", lastSelectedItem.id);
-                startActivity(myIntent);
             }
         }
     }

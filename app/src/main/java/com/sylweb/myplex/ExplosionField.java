@@ -26,6 +26,7 @@ public class ExplosionField extends View {
     private List<ExplosionAnimator> mExplosions = new ArrayList<>();
     private int[] mExpandInset = new int[2];
     private Context context;
+    private View storedView;
 
     public ExplosionField(Context context) {
         super(context);
@@ -79,6 +80,7 @@ public class ExplosionField extends View {
     public void explode(final View view) {
         Rect r = new Rect();
         view.getGlobalVisibleRect(r);
+        this.storedView = view;
         int[] location = new int[2];
         getLocationOnScreen(location);
         r.offset(-location[0], -location[1]);
@@ -93,7 +95,6 @@ public class ExplosionField extends View {
             public void onAnimationUpdate(ValueAnimator animation) {
                 view.setTranslationX((random.nextFloat() - 0.5f) * view.getWidth() * 0.05f);
                 view.setTranslationY((random.nextFloat() - 0.5f) * view.getHeight() * 0.05f);
-
             }
         });
         animator.start();
@@ -102,7 +103,9 @@ public class ExplosionField extends View {
     }
 
     public void clear() {
-        mExplosions.clear();
+        storedView.setScaleX(1.0f);
+        storedView.setScaleY(1.0f);
+        storedView.setAlpha(1.0f);
         invalidate();
     }
 

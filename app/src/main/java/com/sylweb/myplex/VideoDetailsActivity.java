@@ -1,10 +1,14 @@
 package com.sylweb.myplex;
 
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,8 +19,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +34,8 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     private MenuItem deleteFilmItem;
     private MenuItem markAsSeenItem;
     private MenuItem markAsUnseenItem;
+    private ExplosionField mExplosion;
+    protected MessageReceiver messageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
         this.video= (VideoEntry) intent.getExtras().getSerializable("SELECTED_VIDEO");
         this.libraryId = intent.getIntExtra("LIBRARY_ID", 0);
         this.lastGridPosition = intent.getIntExtra("POSITION", 0);
+        this.mExplosion = ExplosionField.attach2Window(this);
 
         loadData();
     }
@@ -134,6 +139,8 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onResume() {
         super.onResume();
+        this.messageReceiver = new MessageReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("EXPLOSION_FINISHED"));
         this.playButton.setOnClickListener(this);
         this.poster.setOnClickListener(this);
     }
@@ -146,6 +153,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onPause() {
         super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
         this.playButton.setOnClickListener(null);
         this.poster.setOnClickListener(null);
     }
@@ -168,27 +176,30 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View view) {
         if(view.equals(this.playButton) || view.equals(this.poster)) {
+            this.mExplosion.explode(this.poster);
+        }
+    }
 
-            //Play video using VLC, VLC is cool, it can play lot of different files and it can resume play where user stopped it
-            if(video.file_url != null && !video.file_url.equals("")) {
-                try {
-                    File f = new File(video.file_url);
+    private void playVideo() {
+        //Play video using VLC, VLC is cool, it can play lot of different files and it can resume play where user stopped it
+        if(video.file_url != null && !video.file_url.equals("")) {
+            try {
+                File f = new File(video.file_url);
                     /*Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setPackage("org.videolan.vlc");
                     intent.putExtra("from_start", false); //Get back where we stopped last time
                     intent.setData(Uri.fromFile(f));
                     startActivity(intent);*/
 
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromFile(f));
-                    intent.setDataAndType(Uri.fromFile(f), "video/*");
-                    startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromFile(f));
+                intent.setDataAndType(Uri.fromFile(f), "video/*");
+                startActivity(intent);
 
-                    VideoModel mod = new VideoModel();
-                    mod.tagVideoAsViewed(video);
-                }
-                catch(ActivityNotFoundException ex) {
-                    Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
-                }
+                VideoModel mod = new VideoModel();
+                mod.tagVideoAsViewed(video);
+            }
+            catch(ActivityNotFoundException ex) {
+                Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -220,5 +231,18 @@ public class VideoDetailsActivity extends AppCompatActivity implements View.OnCl
             mod.tagVideoAsNotViewed(video);
         }
         return false;
+    }
+
+    //Message receiver
+    public class MessageReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction().toString().equals("EXPLOSION_FINISHED")) {
+                playVideo();
+                mExplosion.clear();
+            }
+        }
     }
 }
