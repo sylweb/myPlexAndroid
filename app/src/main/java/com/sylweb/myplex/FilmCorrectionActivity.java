@@ -130,7 +130,7 @@ public class FilmCorrectionActivity extends AppCompatActivity implements View.On
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("LIBRARY_ID", this.libraryId);
-        intent.putExtra("POSITION", 1);
+        intent.putExtra("POSITION", position);
         startActivity(intent);
     }
 

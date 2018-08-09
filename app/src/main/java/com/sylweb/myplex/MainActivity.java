@@ -9,8 +9,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -30,7 +30,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener, View.OnClickListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
     private ArrayList<LibraryEntry> libraryList;
     private ListView myList;
@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity
     private int currentLibraryId;
     private boolean synchroRunning;
     private MessageReceiver messageReceiver;
+    private SearchView searchView;
+    private String searchText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,6 @@ public class MainActivity extends AppCompatActivity
         frag.libraryId = libId;
         frag.context = this.getApplicationContext();
         frag.gridPosition = position;
-
         ft.replace(R.id.content_frame, frag);
         ft.commit();
     }
@@ -133,7 +134,38 @@ public class MainActivity extends AppCompatActivity
         (menu.findItem(R.id.sync)).setActionView(this.syncImage);
         (menu.findItem(R.id.sync)).setVisible(true);
 
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnCloseListener(this);
+
         return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        String temp = query;
+        this.searchView.clearFocus();
+        this.searchView.setIconified(true); //First call remove search text
+        this.searchView.setIconified(true); //second call close the search
+        VideoModel mod = new VideoModel();
+        mod.askForUpdateWithFilter(this, this.currentLibraryId, query);
+        searchView.setQuery(temp,false);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        this.searchText = newText.trim();
+        return false;
+    }
+
+    @Override
+    public boolean onClose() {
+        if(searchText == null || this.searchText.equals("")) {
+            VideoModel mod = new VideoModel();
+            mod.askForUpdate(this, this.currentLibraryId);
+        }
+        return false;
     }
 
     @Override

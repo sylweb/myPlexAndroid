@@ -92,8 +92,25 @@ public class VideoModel {
         return all;
     }
 
+    public ArrayList<VideoEntry> getAllForLibraryWithFilter(Integer libraryId, String titleFilter) {
+        String query = "SELECT * FROM video WHERE library_id = %d AND name LIKE '%%%s%%'ORDER BY name ASC";
+        query = String.format(query, libraryId, titleFilter);
+        DBManager db = new DBManager();
+        ArrayList results = db.executeQuery(query);
+        ArrayList<VideoEntry> all = new ArrayList<>();
+        if(results != null && results.size() > 0) {
+            for(int i=0; i < results.size(); i++) {
+                all.add(new VideoEntry(results.get(i)));
+            }
+        }
+        return all;
+    }
+
     public void askForUpdate(Context c, int libraryId) {
         new ReadAllThread(c,libraryId).start();
+    }
+    public void askForUpdateWithFilter(Context c, int libraryId, String filter) {
+        new ReadWithTitleFilter(c, libraryId, filter).start();
     }
 
     public class ReadAllThread extends Thread {
@@ -109,6 +126,28 @@ public class VideoModel {
         @Override
         public void run() {
             ArrayList<VideoEntry> videos = getAllForLibrary(this.libraryId);
+            Intent intent = new Intent("VIDEO_DATA_READY");
+            intent.putExtra("VIDEO_DATA", videos);
+            intent.putExtra("LIBRARY_ID", this.libraryId);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
+    }
+
+    public class ReadWithTitleFilter extends Thread {
+
+        private int libraryId;
+        private Context context;
+        private String titleFilter;
+
+        public ReadWithTitleFilter(Context c, int libraryId, String titleFitler) {
+            this.context = c;
+            this.libraryId = libraryId;
+            this.titleFilter = titleFitler;
+        }
+
+        @Override
+        public void run() {
+            ArrayList<VideoEntry> videos = getAllForLibraryWithFilter(this.libraryId, this.titleFilter);
             Intent intent = new Intent("VIDEO_DATA_READY");
             intent.putExtra("VIDEO_DATA", videos);
             intent.putExtra("LIBRARY_ID", this.libraryId);

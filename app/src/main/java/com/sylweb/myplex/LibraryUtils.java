@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by sylvain on 27/09/2017.
@@ -55,8 +54,6 @@ public class LibraryUtils {
 
                 //Then find all files in the library directory
                 ArrayList<String> files = getAllFiles();
-
-
 
                 //For each found file...
                 for (String filename : files) {
@@ -404,27 +401,33 @@ public class LibraryUtils {
                             if(ge != null) vid.genres.add(ge);
                         }
 
-                        String poster = (String) entry.get("poster_path");
-                        poster = poster.replace("/", "");
+                        try {
+                            String poster = (String) entry.get("poster_path");
+                            poster = poster.replace("/", "");
 
-                        Bitmap mybitmap = http.getPicture("https://image.tmdb.org/t/p/w500/" + poster);
-                        File directory = new File(context.getString(R.string.image_location) + "/");
-                        if (!directory.exists()) directory.mkdir();
-                        File myjpgBig = new File(context.getString(R.string.image_location), "big-"+poster);
-                        if (!myjpgBig.exists()) myjpgBig.createNewFile();
-                        OutputStream outputstream = new FileOutputStream(myjpgBig);
-                        mybitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputstream);
-                        outputstream.close();
+                            Bitmap mybitmap = http.getPicture("https://image.tmdb.org/t/p/w500/" + poster);
+                            File directory = new File(context.getString(R.string.image_location) + "/");
+                            if (!directory.exists()) directory.mkdir();
+                            File myjpgBig = new File(context.getString(R.string.image_location), "big-" + poster);
+                            if (!myjpgBig.exists()) myjpgBig.createNewFile();
+                            OutputStream outputstream = new FileOutputStream(myjpgBig);
+                            mybitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputstream);
+                            outputstream.close();
 
-                        File myjpgSmall = new File(context.getString(R.string.image_location), "small-"+poster);
-                        if (!myjpgSmall.exists()) myjpgSmall.createNewFile();
-                        outputstream = new FileOutputStream(myjpgSmall);
-                        mybitmap = getResizedBitmap(mybitmap, 186,280);
-                        mybitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputstream);
-                        outputstream.close();
+                            File myjpgSmall = new File(context.getString(R.string.image_location), "small-" + poster);
+                            if (!myjpgSmall.exists()) myjpgSmall.createNewFile();
+                            outputstream = new FileOutputStream(myjpgSmall);
+                            mybitmap = getResizedBitmap(mybitmap, 186, 280);
+                            mybitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputstream);
+                            outputstream.close();
 
-                        vid.small_jpg_url = context.getString(R.string.image_location) + "small-"+poster;
-                        vid.big_jpg_url = context.getString(R.string.image_location) + "big-"+poster;
+                            vid.small_jpg_url = context.getString(R.string.image_location) + "small-" + poster;
+                            vid.big_jpg_url = context.getString(R.string.image_location) + "big-" + poster;
+                        }
+                        catch(Exception ex) {
+                            //something went wrong here, don't know what but we can consider that we didn't find this movie
+                            vid = null;
+                        }
 
                         return vid;
                     }
